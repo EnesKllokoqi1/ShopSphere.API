@@ -1,9 +1,15 @@
+using DotNetEnv;
+using Microsoft.EntityFrameworkCore;
 using Scalar.AspNetCore;
+using ShopService.Infrastructure.Data;
 
+Env.Load();
 var builder = WebApplication.CreateBuilder(args);
-
+var connectionString =
+    Environment.GetEnvironmentVariable("DB_CONNECTION")
+    ?? builder.Configuration.GetConnectionString("DefaultConnection");
 // Add services to the container.
-// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
+builder.Services.AddDbContext<AppDbContext>(op => op.UseNpgsql(connectionString));
 builder.Services.AddOpenApi();
 
 var app = builder.Build();
