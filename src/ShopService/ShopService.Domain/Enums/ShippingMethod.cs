@@ -6,10 +6,11 @@ using System.Threading.Tasks;
 
 namespace ShopService.Domain.Enums
 {
-  public enum DiscountType
-  {
-      Percentage = 0,
-      FixedAmount = 1,
-      FreeShipping = 2
-  }
+    public enum ShippingMethod
+    {
+        Standard = 0,
+        Express = 1,
+        NextDay = 2,
+        International = 3
+    }
 }

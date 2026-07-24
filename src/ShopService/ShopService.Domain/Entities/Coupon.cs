@@ -14,7 +14,6 @@ namespace ShopService.Domain.Entities
         public string Name { get; set; } = string.Empty;
         public string? Description { get; set; }
         public DiscountType DiscountType { get; set; } = DiscountType.Percentage;
-        public string DiscountType { get; set; } = "Percentage";
         public decimal DiscountValue { get; set; }
         public decimal? MinOrderAmount { get; set; }
         public decimal? MaxDiscountAmount { get; set; }

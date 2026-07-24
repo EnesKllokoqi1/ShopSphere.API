@@ -18,6 +18,6 @@ namespace ShopService.Domain.Entities
         public DateTime? UpdatedAt { get; set; }
         public Category? ParentCategory { get; set; }
         public ICollection<Category> SubCategories { get; set; } = new List<Category>();
-        public List<Product> Products { get; set; } = new List<Category>();
+        public ICollection<Product> Products { get; set; } = new List<Product>();
     }
 }
