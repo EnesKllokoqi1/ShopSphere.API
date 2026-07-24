@@ -21,7 +21,7 @@ namespace ShopService.Domain.Entities
         public bool IsActive { get; set; } = true;
         public bool IsFeatured { get; set; }
         public string? Brand { get; set; }
-        public double? Weight { get; set; }
+        public decimal? Weight { get; set; }
         public Guid? CategoryId { get; set; }
         public DateTime CreatedAt { get; set; }
         public DateTime? UpdatedAt { get; set; }

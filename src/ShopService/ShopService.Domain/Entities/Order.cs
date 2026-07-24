@@ -16,6 +16,7 @@ namespace ShopService.Domain.Entities
         public decimal TotalAmount { get; set; }
         public OrderStatus OrderStatus { get; set; } = OrderStatus.Pending;
         public PaymentStatus PaymentStatus { get; set; } = PaymentStatus.Pending;
+        public ShippingMethod ShippingMethod { get; set; } = ShippingMethod.Standard;
         public string ShippingAddress { get; set; } = string.Empty;
         public string BillingAddress { get; set; } = string.Empty;
         public string PaymentMethod { get; set; } = string.Empty;
@@ -23,7 +24,6 @@ namespace ShopService.Domain.Entities
         public DateTime? UpdatedAt { get; set; }
 
         public string? PaymentIntentId { get; set; }
-        public string? ShippingMethod { get; set; } = "Standard";
         public string? TrackingNumber { get; set; }
         public string? Notes { get; set; }
         public User? User { get; set; }
