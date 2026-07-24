@@ -1,4 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using ShopService.Domain.Entities;
 using ShopService.Domain.Enums;
 

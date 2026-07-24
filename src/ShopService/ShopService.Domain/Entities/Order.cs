@@ -9,24 +9,23 @@ namespace ShopService.Domain.Entities
 {
     public class Order
     {
-        public Guid Id { get; set; }
-        public string OrderNumber { get; set; } = string.Empty;
-        public Guid? UserId { get; set; }
-        public DateTime OrderDate { get; set; } = DateTime.UtcNow;
-        public decimal TotalAmount { get; set; }
-        public OrderStatus OrderStatus { get; set; } = OrderStatus.Pending;
-        public PaymentStatus PaymentStatus { get; set; } = PaymentStatus.Pending;
-        public ShippingMethod ShippingMethod { get; set; } = ShippingMethod.Standard;
-        public string ShippingAddress { get; set; } = string.Empty;
-        public string BillingAddress { get; set; } = string.Empty;
-        public string PaymentMethod { get; set; } = string.Empty;
-        public DateTime CreatedAt { get; set; }
-        public DateTime? UpdatedAt { get; set; }
-
-        public string? PaymentIntentId { get; set; }
-        public string? TrackingNumber { get; set; }
-        public string? Notes { get; set; }
-        public User? User { get; set; }
-        public ICollection<OrderItem> Items { get; set; } = new List<OrderItem>();
+          public Guid Id { get; set; }
+   public string OrderNumber { get; set; } = string.Empty;
+   public Guid? UserId { get; set; }
+   public DateTime OrderDate { get; set; } = DateTime.UtcNow;
+   public decimal TotalAmount { get; set; }
+   public OrderStatus OrderStatus { get; set; } = OrderStatus.Pending;
+   public PaymentStatus PaymentStatus { get; set; } = PaymentStatus.Pending;
+   public ShippingMethod ShippingMethod { get; set; } = ShippingMethod.Standard;
+   public string ShippingAddress { get; set; } = string.Empty;
+   public string BillingAddress { get; set; } = string.Empty;
+   public string PaymentMethod { get; set; } = string.Empty;
+   public DateTime CreatedAt { get; set; }
+   public DateTime? UpdatedAt { get; set; }
+   public string? PaymentIntentId { get; set; }
+   public string? TrackingNumber { get; set; }
+   public string? Notes { get; set; }
+   public User? User { get; set; }
+   public ICollection<OrderItem> Items { get; set; } = new List<OrderItem>();
     }
 }
