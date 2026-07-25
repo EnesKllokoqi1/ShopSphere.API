@@ -402,7 +402,7 @@ namespace ShopService.Infrastructure.Data
                     .HasPrecision(18, 2);
 
                 entity.HasOne(e => e.Order)
-                    .WithMany(e => e.Items)
+                    .WithMany(e => e.OrderItems)
                     .HasForeignKey(e => e.OrderId)
                     .OnDelete(DeleteBehavior.Cascade);
 

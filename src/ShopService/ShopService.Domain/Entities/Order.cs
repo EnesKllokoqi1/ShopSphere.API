@@ -25,6 +25,7 @@ namespace ShopService.Domain.Entities
         public string? PaymentIntentId { get; set; }
         public string? TrackingNumber { get; set; }
         public string? Notes { get; set; }
+        public ICollection<OrderItem> OrderItems { get; set; } = new List<OrderItem>();
         public User? User { get; set; }
     }
 }
