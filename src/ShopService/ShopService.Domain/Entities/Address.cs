@@ -16,7 +16,6 @@ namespace ShopService.Domain.Entities
         public string PostalCode { get; set; } = string.Empty;
         public string Country { get; set; } = string.Empty;
         public bool IsDefault { get; set; }
-
         public User? User { get; set; }
     }
 }
