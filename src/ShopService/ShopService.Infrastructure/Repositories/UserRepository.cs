@@ -1,4 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using ShopService.Application.DTOs.UserDTOs;
 using ShopService.Application.Interfaces;
 using ShopService.Domain.Entities;
