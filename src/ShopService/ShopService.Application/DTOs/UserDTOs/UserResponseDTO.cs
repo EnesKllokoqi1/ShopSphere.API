@@ -17,6 +17,8 @@ namespace ShopService.Application.DTOs.UserDTOs
         public string? PhoneNumber { get; set; }
         public Gender? Gender { get; set; }         
         public UserRole Role { get; set; }            
+        public string? VerificationToken { get; set; }
+        public DateTime? EmailVerificationExpiryTime { get; set; }
         public bool IsActive { get; set; }
         public bool IsEmailVerified { get; set; }
         public DateTime? CreatedAt { get; set; }

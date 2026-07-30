@@ -11,12 +11,13 @@ namespace ShopService.Application.Interfaces
 {
     public interface IAuthService
     {
-        Task<TokenResponseDTO> LogInAsync(UserLoginDTO userLoginDTO);
-        Task<UserResponseDTO?> RegisterAsync(UserRegisterDTO userLoginDTO);
+        Task<TokenResponseDTO?> LogInAsync(UserLoginDTO userLoginDTO);
+        Task<UserResponseDTO?> RegisterAsync(UserRegisterDTO userRegisterDTO);
         Task<bool> DeleteUserAsync(Guid guid);
-        Task<UserResponseDTO> UpdateUserAsync(UserUpdateDTO user);
+        Task<UserResponseDTO?> UpdateUserAsync(UserUpdateDTO user,Guid guid);
         Task<TokenResponseDTO?> RefreshTokens(string refreshToken);
         Task<VerifyEmailResponseDTO> VerifyEmail(string emailToken);
+        Task<ResendVerificationRequestDTO?> ResendVerificationAsync(string email);
 
     }
 }

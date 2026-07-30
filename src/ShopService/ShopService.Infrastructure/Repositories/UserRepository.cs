@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using ShopService.Application.DTOs.UserDTOs;
 using ShopService.Application.Interfaces;
 using ShopService.Domain.Entities;
 using ShopService.Infrastructure.Data;
@@ -12,7 +13,7 @@ namespace ShopService.Infrastructure.Repositories
 {
     public class UserRepository : IUserRepository
     {
-        public AppDbContext _appDbContext;
+        private readonly AppDbContext _appDbContext;
         public UserRepository(AppDbContext appDbContext)
         {
             _appDbContext = appDbContext;
@@ -26,14 +27,14 @@ namespace ShopService.Infrastructure.Repositories
 
         public async Task<bool> DeleteUser(Guid guid)
         {
-            var user = await _appDbContext.Users.FirstOrDefaultAsync(e=>e.Id==guid);
+            var user = await _appDbContext.Users.FindAsync(guid);
             if (user is not null)
             {
                 _appDbContext.Users.Remove(user);
                 await _appDbContext.SaveChangesAsync();
                 return true;
             }
-            return false;
+            return false;               
         }
 
         public async Task<bool> EmailExistsAsync(string email)
@@ -43,16 +44,10 @@ namespace ShopService.Infrastructure.Repositories
             if (check) { return true; }
             return false;
         }
-
-        public async Task<bool> ExistsAsync(Guid id)
-        {
-            return await _appDbContext.Users.AnyAsync(e => e.Id == id);
-        }
-
         public async Task<User?> GetByEmailAsync(string email)
         {
             var normalizedEmail = email.Trim().ToLower();
-            var user = await _appDbContext.Users.FirstOrDefaultAsync(e => e.EmailAddress == email);
+            var user = await _appDbContext.Users.FirstOrDefaultAsync(e => e.EmailAddress == normalizedEmail);
             if (user is not null)
             {
                 return user;
@@ -79,6 +74,37 @@ namespace ShopService.Infrastructure.Repositories
             user.PhoneNumber = updatedUser.PhoneNumber;
             user.Gender = updatedUser.Gender;
             await _appDbContext.SaveChangesAsync();
+            return user;
+        }
+        public async Task SaveChanges()
+        {
+            await _appDbContext.SaveChangesAsync();
+        }
+
+        public async Task<User?> CheckUserRefreshToken(string refreshToken)
+        {
+            var checkedUser = await _appDbContext.Users.FirstOrDefaultAsync(e => e.RefreshToken == refreshToken);
+            if (checkedUser == null)
+            {
+                return null;
+            }
+            if (checkedUser.RefreshTokenExpiryTime <= DateTime.UtcNow)
+            {
+                checkedUser.RefreshToken = null;
+                checkedUser.RefreshTokenExpiryTime = null;
+                await _appDbContext.SaveChangesAsync();
+                return null;
+            }
+            return checkedUser;
+        }
+
+        public async Task<User?> CheckEmailVerificationToken(string emailVerificationToken)
+        {
+            var user = await _appDbContext.Users.FirstOrDefaultAsync(e => e.EmailVerificationToken == emailVerificationToken);
+            if (user is null)
+            {
+                return null;
+            }
             return user;
         }
     }
