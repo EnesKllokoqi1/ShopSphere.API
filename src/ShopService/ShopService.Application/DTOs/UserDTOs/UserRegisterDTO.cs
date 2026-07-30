@@ -1,5 +1,7 @@
-﻿using System;
+using ShopService.Domain.Enums;
+using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -38,7 +40,6 @@ namespace ShopService.Application.DTOs.UserDTOs
         [Phone(ErrorMessage = "Invalid phone number format")]
         [StringLength(20)]
         public string? PhoneNumber { get; set; }
-
         public Gender? Gender { get; set; }
     }
 }

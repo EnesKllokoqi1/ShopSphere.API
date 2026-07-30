@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -12,9 +12,11 @@ namespace ShopService.Application.Interfaces
     {
         Task<User?> GetUser(Guid guid);
         Task<User> CreateUser(User user);
-        Task<bool> ExistsAsync(Guid id);
         Task<bool> DeleteUser(Guid guid);
+        Task SaveChanges();
+        Task<User?> CheckUserRefreshToken(string refreshToken);
         Task<User?> UpdateUser(User user, Guid guid);
+        Task<User?> CheckEmailVerificationToken(string emailVerificationToken);
         Task<bool> EmailExistsAsync(string email);
         Task<User?> GetByEmailAsync(string email);
     }
