@@ -3,7 +3,10 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Scalar.AspNetCore;
+using ShopService.Application.Interfaces;
+using ShopService.Application.Service;
 using ShopService.Infrastructure.Data;
+using ShopService.Infrastructure.Repositories;
 using System.Text;
 
 Env.Load();
@@ -14,6 +17,8 @@ var connectionString =
 // Add services to the container.
 builder.Services.AddControllers();
 builder.Services.AddDbContext<AppDbContext>(op => op.UseNpgsql(connectionString));
+builder.Services.AddScoped<IAuthService, AuthService>();
+builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddOpenApi();
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>

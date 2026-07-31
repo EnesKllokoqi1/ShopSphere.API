@@ -237,5 +237,18 @@ namespace ShopService.Application.Service
                 VerificationToken = user.EmailVerificationToken,
             };
         }
+
+        public async Task<bool> LogoutAsync(Guid userId)
+        {
+            var user = await _userRepository.GetUser(userId);
+            if(user is null)
+            {
+                return false;
+            }
+            user.RefreshToken = null;
+            user.RefreshTokenExpiryTime = null;
+            await _userRepository.SaveChanges();
+            return true;
+        }
     }
 }
