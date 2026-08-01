@@ -18,7 +18,7 @@ namespace ShopService.Application.Interfaces
         Task<TokenResponseDTO?> RefreshTokens(string refreshToken);
         Task<VerifyEmailResponseDTO> VerifyEmail(string emailToken);
         Task<bool> LogoutAsync(Guid userId);
-        Task<ResendVerificationRequestDTO?> ResendVerificationAsync(string email);
+        Task<ResendVerificationResponseDTO?> ResendVerificationAsync(string email);
 
     }
 }

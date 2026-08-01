@@ -218,7 +218,7 @@ namespace ShopService.Application.Service
                 .Substring(0, 32);
         }
 
-        public async Task<ResendVerificationRequestDTO?> ResendVerificationAsync(string email)
+        public async Task<ResendVerificationResponseDTO?> ResendVerificationAsync(string email)
         {
             var user = await _userRepository.GetByEmailAsync(email);
             if (user is null)
@@ -229,7 +229,7 @@ namespace ShopService.Application.Service
             user.IsEmailVerified = false;
             user.EmailVerificationTokenExpiry = DateTime.UtcNow.AddHours(24);
             await _userRepository.SaveChanges();
-            return new ResendVerificationRequestDTO
+            return new ResendVerificationResponseDTO
             {
                 Success = true,
                 Message = "New email verification token generated!",

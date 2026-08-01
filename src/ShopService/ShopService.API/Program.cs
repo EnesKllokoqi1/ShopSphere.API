@@ -44,6 +44,10 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         };
 
     });
+builder.Services.AddRouting(options =>
+{
+    options.LowercaseUrls = true;
+});
 var app = builder.Build();
 using (var scope = app.Services.CreateScope())
 {
