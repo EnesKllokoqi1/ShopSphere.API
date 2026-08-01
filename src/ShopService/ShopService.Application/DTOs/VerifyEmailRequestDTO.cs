@@ -6,8 +6,8 @@ using System.Threading.Tasks;
 
 namespace ShopService.Application.DTOs
 {
-    public class ResendVerificationRequestDTO
+    public class VerifyEmailRequestDTO
     {
-        public string EmailAddress { get; set; } = string.Empty;
+        public string EmailVerificationToken { get; set; }  = string.Empty;
     }
 }
