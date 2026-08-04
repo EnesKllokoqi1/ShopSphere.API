@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace ShopService.Application.DTOs.ProductDTOs
 {
-    internal class ProductCategoryResponseDTO
+    public class ProductCategoryResponseDTO
     {
     }
 }
