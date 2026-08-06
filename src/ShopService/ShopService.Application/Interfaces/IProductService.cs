@@ -10,15 +10,15 @@ namespace ShopService.Application.Interfaces
 {
     public interface IProductService
     {
-        Task<List<ProductResponseDTO>> GetAllProducts();
+        Task<IEnumerable<ProductResponseDTO>> GetAllProducts();
         Task<ProductResponseDTO> GetSpecificProduct(Guid guid );
-        Task<List<ProductCategoryResponseDTO>> GetProductCategories();
+        Task<IEnumerable<ProductCategoryResponseDTO>> GetProductCategories();
         Task<ProductResponseDTO> CreateProduct(CreateProductDTO createProductDTO);
         Task<ProductResponseDTO> UpdateProductDto(UpdateProductDTO createProductDTO);
         Task<bool> DeleteProduct(Guid guid);
         Task<bool> AdjustStockAsync(Guid productId, int quantityChange);
-        Task<List<ProductResponseDTO>> GetLowStockProductsAsync();
-        Task<List<ProductResponseDTO>> GetFeaturedProducts();
-        Task<ProductReviewResponseDTO> GetProductReviews(Guid guid);
+        Task<IEnumerable<ProductResponseDTO>> GetLowStockProductsAsync();
+        Task<IEnumerable<ProductResponseDTO>> GetFeaturedProducts();
+        Task<IEnumerable<ProductReviewResponseDTO>> GetProductReviews(Guid guid);
     }
 }
