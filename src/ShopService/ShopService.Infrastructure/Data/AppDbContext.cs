@@ -488,7 +488,7 @@ namespace ShopService.Infrastructure.Data
                 entity.Property(e => e.StartDate)
                     .HasDefaultValueSql("CURRENT_TIMESTAMP")
                     .ValueGeneratedOnAdd();
-
+                
                 entity.Property(e => e.UsedCount)
                     .HasDefaultValue(0);
 
