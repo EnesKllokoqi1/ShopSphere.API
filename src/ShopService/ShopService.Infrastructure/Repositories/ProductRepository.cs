@@ -4,6 +4,7 @@ using Microsoft.VisualBasic;
 using ShopService.Application.DTOs.ProductDTOs;
 using ShopService.Application.Interfaces;
 using ShopService.Domain.Entities;
+using System.Text.RegularExpressions;
 using ShopService.Infrastructure.Data;
 using System;
 using System.Collections.Generic;
@@ -29,12 +30,16 @@ namespace ShopService.Infrastructure.Repositories
                 return false;
             }
             product.StockQuantity += quantityChange;
-            await SaveChanges();
+            await _appDbContext.SaveChangesAsync();
             return true;
         }
 
         public async Task<Product?> CreateProduct(Product product)
         {
+            if (string.IsNullOrEmpty(product.Slug))
+            {
+                product.Slug = GenerateSlug(product.Name);
+            }
             bool exists = await _appDbContext.Products
         .AnyAsync(p => p.Sku == product.Sku || p.Slug == product.Slug || p.Name == product.Name);
             if (exists)
@@ -47,15 +52,21 @@ namespace ShopService.Infrastructure.Repositories
             
         }
 
+        private string GenerateSlug(string name)
+        {
+            string slug = name.ToLower().Replace(" ", "-").Replace("&", "and");
+            return Regex.Replace(slug, "[^a-z0-9-]", "");
+        }
+
         public async Task<bool> DeleteProduct(Guid guid)
         {
             var product = await GetProductById(guid);
             if (product is null)
-            {
+            {   
                 return false;
             }
             _appDbContext.Products.Remove(product);
-            await SaveChanges();
+            await _appDbContext.SaveChangesAsync();
             return true;
         }
 
@@ -80,7 +91,7 @@ namespace ShopService.Infrastructure.Repositories
             return await _appDbContext.Products.FindAsync(productId);
         }
 
-        public async Task<IEnumerable<ProductCategoryResponseDTO>> GetProductCategoryResponseDTOs()
+        public async Task<IEnumerable<ProductCategoryResponseDTO>> GetProductCategories()
         {
             return await _appDbContext.Categories
          .Select(c => new ProductCategoryResponseDTO
@@ -132,12 +143,6 @@ namespace ShopService.Infrastructure.Repositories
                 ReviewCreatedAt=e.CreatedAt,
             }).ToListAsync();
         }
-
-        public async Task SaveChanges()
-        {
-            await _appDbContext.SaveChangesAsync();
-        }
-
         public async Task<Product?> UpdateProduct(Product updatedProduct,Guid productId)
         {
             var product = await GetProductById(productId);
@@ -145,8 +150,11 @@ namespace ShopService.Infrastructure.Repositories
             {
                 return null;
             }
+            if (product.Name != updatedProduct.Name)
+            {
+                product.Slug = GenerateSlug(updatedProduct.Name);
+            }
             product.Name = updatedProduct.Name;
-            product.Slug = updatedProduct.Slug;
             product.Description = updatedProduct.Description;
             product.ShortDescription = updatedProduct.ShortDescription;
             product.Sku = updatedProduct.Sku;
@@ -159,7 +167,7 @@ namespace ShopService.Infrastructure.Repositories
             product.Brand = updatedProduct.Brand;
             product.Weight = updatedProduct.Weight;
             product.CategoryId = updatedProduct.CategoryId;
-            await SaveChanges();
+            await _appDbContext.SaveChangesAsync();
             return product;
         }
         private static Expression<Func<Product, ProductResponseDTO>> MapToProductResponseDTO()
@@ -185,5 +193,12 @@ namespace ShopService.Infrastructure.Repositories
             };
         }
 
+        public async Task<IEnumerable<ProductResponseDTO>> GetAllProducts()
+        {
+            return await _appDbContext.Products
+           .AsNoTracking()
+           .Select(MapToProductResponseDTO())
+           .ToListAsync();
+        }
     }
 }

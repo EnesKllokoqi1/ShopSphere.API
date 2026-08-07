@@ -12,11 +12,11 @@ namespace ShopService.Application.Interfaces
     {
         Task<Product?> GetProductById(Guid productId);
         Task<Product?> CreateProduct(Product product);
+        Task<IEnumerable<ProductResponseDTO>> GetAllProducts();
         Task<bool> DeleteProduct(Guid guid);
         Task<Product?> UpdateProduct(Product updatedProduct, Guid productId);
-        Task SaveChanges();
         Task<bool> AdjustStockAsync(Guid productId, int quantityChange);
-        Task<IEnumerable<ProductCategoryResponseDTO>> GetProductCategoryResponseDTOs();
+        Task<IEnumerable<ProductCategoryResponseDTO>> GetProductCategories();
         Task<IEnumerable<ProductResponseDTO>> GetLowStockProductsAsync();
         Task<IEnumerable<ProductResponseDTO>> GetFeaturedProducts();
         Task<IEnumerable<ProductReviewResponseDTO>> GetProductReviews(Guid productId);
