@@ -211,11 +211,7 @@ namespace ShopService.Application.Service
         }
         private string GenerateVerificationToken()
         {
-            return Convert.ToBase64String(RandomNumberGenerator.GetBytes(32))
-                .Replace("+", "")
-                .Replace("/", "")
-                .Replace("=", "")
-                .Substring(0, 32);
+            return Convert.ToHexString(RandomNumberGenerator.GetBytes(16));
         }
 
         public async Task<ResendVerificationResponseDTO?> ResendVerificationAsync(string email)
