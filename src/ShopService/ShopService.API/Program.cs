@@ -5,6 +5,7 @@ using Microsoft.IdentityModel.Tokens;
 using Scalar.AspNetCore;
 using ShopService.Application.Interfaces;
 using ShopService.Application.Service;
+using ShopService.Domain.Enums;
 using ShopService.Infrastructure.Data;
 using ShopService.Infrastructure.Repositories;
 using System.Text;
@@ -19,6 +20,8 @@ builder.Services.AddControllers();
 builder.Services.AddDbContext<AppDbContext>(op => op.UseNpgsql(connectionString));
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<IProductRepository, ProductRepository>();
+builder.Services.AddScoped<IProductService, ProductService>();
 builder.Services.AddOpenApi();
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
@@ -47,6 +50,11 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 builder.Services.AddRouting(options =>
 {
     options.LowercaseUrls = true;
+});
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy("AdminOnly", policy =>
+       policy.RequireRole(nameof(UserRole.Admin)));
 });
 var app = builder.Build();
 using (var scope = app.Services.CreateScope())

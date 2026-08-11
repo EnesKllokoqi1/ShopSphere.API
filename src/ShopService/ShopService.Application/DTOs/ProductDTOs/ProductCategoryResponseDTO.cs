@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace ShopService.Application.DTOs.ProductDTOs
 {
-    public class ProductCategoryResponseDTO :ProductResponseDTO
+    public class ProductCategoryResponseDTO : ProductResponseDTO
     {
         public Guid Id { get; set; }
         public string Name { get; set; } = string.Empty;
@@ -16,7 +16,6 @@ namespace ShopService.Application.DTOs.ProductDTOs
         public bool IsActive { get; set; } = true;
         public DateTime CreatedAt { get; set; }
         public DateTime? UpdatedAt { get; set; }
-        public string ProductSlug { get; set; }
         public IEnumerable<ProductResponseDTO> Products { get; set; } = new List<ProductResponseDTO>();
     }
 }
