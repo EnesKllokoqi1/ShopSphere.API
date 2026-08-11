@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace ShopService.Application.DTOs.ProductDTOs
 {
-    public class ProductCategoryResponseDTO :ProductResponseDTO
+    public class ProductCategoryResponseDTO : ProductResponseDTO
     {
         public Guid Id { get; set; }
         public string Name { get; set; } = string.Empty;

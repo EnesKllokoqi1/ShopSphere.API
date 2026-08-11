@@ -42,7 +42,6 @@ namespace ShopService.Application.DTOs.ProductDTOs
 
         [MaxLength(100, ErrorMessage = "Brand name cannot exceed 100 characters.")]
         public string? Brand { get; set; }
-
         public Guid? CategoryId { get; set; }
     }
 }
