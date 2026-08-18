@@ -19,7 +19,7 @@ namespace ShopService.API.Controllers
             _authService = authService;
         }
 
-        [HttpPost("register-user")]
+        [HttpPost("register")]
         public async Task<ActionResult<UserResponseDTO?>> RegisterUser([FromBody] UserRegisterDTO userRegisterDTO)
         {
             var user = await _authService.RegisterAsync(userRegisterDTO);
@@ -31,14 +31,14 @@ namespace ShopService.API.Controllers
                 });
             }
 
-            return Ok(new
+            return StatusCode(StatusCodes.Status201Created, new
             {
-                Message = "User has been successfully created.",
+                Message = "User account created successfully.",
                 User = user
             });
         }
 
-        [HttpPost("login-user")]
+        [HttpPost("login")]
         public async Task<ActionResult> LoginUser([FromBody] UserLoginDTO userLoginDTO)
         {
             var tokens = await _authService.LogInAsync(userLoginDTO);
@@ -58,7 +58,7 @@ namespace ShopService.API.Controllers
         }
 
         [Authorize]
-        [HttpPost("logout-user")]
+        [HttpPost("logout")]
         public async Task<ActionResult> LogOutUser()
         {
             if (!TryGetUserId(out var userId))
@@ -83,7 +83,7 @@ namespace ShopService.API.Controllers
         }
 
         [Authorize]
-        [HttpDelete("delete-user")]
+        [HttpDelete("me")]
         public async Task<ActionResult> DeleteUser()
         {
             if (!TryGetUserId(out var userId))
@@ -105,7 +105,7 @@ namespace ShopService.API.Controllers
         }
 
         [Authorize]
-        [HttpPut("update-user")]
+        [HttpPut("me")]
         public async Task<ActionResult<UserResponseDTO?>> UpdateUser([FromBody] UserUpdateDTO userUpdateDTO)
         {
             if (!TryGetUserId(out var userId))
@@ -136,7 +136,7 @@ namespace ShopService.API.Controllers
             return Ok(response);
         }
 
-        [HttpPost("resend-verification-token")]
+        [HttpPost("resend-verification")]
         public async Task<ActionResult<ResendVerificationResponseDTO?>> ResendVerificationToken([FromBody] ResendVerificationRequestDTO resendVerificationRequestDTO)
         {
             var user = await _authService.ResendVerificationAsync(resendVerificationRequestDTO.EmailAddress);
@@ -151,7 +151,7 @@ namespace ShopService.API.Controllers
             return Ok(user);
         }
 
-        [HttpPost("refresh-tokens")]
+        [HttpPost("refresh")]
         public async Task<ActionResult> RefreshTokens()
         {
             var refreshToken = Request.Cookies["refresh_token"];
@@ -198,7 +198,7 @@ namespace ShopService.API.Controllers
                 SameSite = SameSiteMode.Lax,
                 Expires = DateTime.UtcNow.AddDays(7),
                 Secure = true,
-                Path = "/api/auth/refresh-tokens"
+                Path = "/api/auth/refresh"
             };
 
             Response.Cookies.Append("access_token", tokenResponseDTO.AccessToken, accessCookieOptions);
@@ -210,7 +210,7 @@ namespace ShopService.API.Controllers
             Response.Cookies.Delete("access_token");
             Response.Cookies.Delete("refresh_token", new CookieOptions
             {
-                Path = "/api/auth/refresh-tokens",
+                Path = "/api/auth/refresh",
                 Secure = true,
                 SameSite = SameSiteMode.Lax
             });
