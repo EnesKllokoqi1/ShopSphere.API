@@ -24,10 +24,10 @@ namespace ShopService.Application.DTOs.ProductDTOs
         [MaxLength(50)]
         public string Sku { get; set; } = string.Empty;
 
-        [Range(0.01, double.MaxValue, ErrorMessage = "Price must be greater than zero.")]
+        [Range(0.01, 1000000, ErrorMessage = "Price must be between 0.01 and 1,000,000.")]
         public decimal Price { get; set; }
 
-        [Range(0.01, double.MaxValue, ErrorMessage = "Compare price must be greater than zero.")]
+        [Range(0.00, 1000000, ErrorMessage = "Compare at price must be between 0.00 and 1,000,000.")]
         public decimal? CompareAtPrice { get; set; }
 
         [Range(0, int.MaxValue, ErrorMessage = "Stock quantity cannot be negative.")]
