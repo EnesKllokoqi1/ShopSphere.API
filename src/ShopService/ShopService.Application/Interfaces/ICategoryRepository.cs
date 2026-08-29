@@ -1,4 +1,4 @@
-﻿using ShopService.Application.DTOs.CategoryDTOs;
+using ShopService.Application.DTOs.CategoryDTOs;
 using ShopService.Application.DTOs.ProductDTOs;
 using ShopService.Domain.Entities;
 using System;
@@ -11,10 +11,10 @@ namespace ShopService.Application.Interfaces
 {
     public interface ICategoryRepository
     {
-        Task<Category> CreateCategory(Category category);
-        Task<bool> DeleteCategory(Guid guid);
+        Task<Category?> CreateCategory(Category category);
+        Task<bool> DeleteCategory(Guid categoryId);
         Task<IEnumerable<CategoryResponseDTO>> GetAllCategories();
-        Task<Category> UpdateCategory(Category updatedCategory,Guid categoryId);
-        Task<Category> GetCategoryById(Guid categoryId);
+        Task<Category?> UpdateCategory(Category updatedCategory,Guid categoryId);
+        Task<Category?> GetCategoryById(Guid categoryId);
     }
 }
