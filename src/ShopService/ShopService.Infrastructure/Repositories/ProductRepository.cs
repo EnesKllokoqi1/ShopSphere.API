@@ -125,7 +125,7 @@ namespace ShopService.Application.Service
                         Weight = p.Weight,
                         CreatedAt = p.CreatedAt,
                         UpdatedAt = p.UpdatedAt
-                    }).ToList()
+                    })
                 })
                 .ToListAsync();
         }
