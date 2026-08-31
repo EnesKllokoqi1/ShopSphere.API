@@ -1,4 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using ShopService.Application.DTOs.CategoryDTOs;
 using ShopService.Application.DTOs.ProductDTOs;
 using ShopService.Application.Interfaces;
@@ -38,7 +38,7 @@ namespace ShopService.Infrastructure.Repositories
         {
             var category = await GetCategoryById(categoryId);
             if (category is null)
-            {   
+            {
                 return false;
             }
             _appDbContext.Categories.Remove(category);
