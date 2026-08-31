@@ -38,7 +38,7 @@ namespace ShopService.Infrastructure.Repositories
         {
             var category = await GetCategoryById(categoryId);
             if (category is null)
-            {   
+            {
                 return false;
             }
             _appDbContext.Categories.Remove(category);

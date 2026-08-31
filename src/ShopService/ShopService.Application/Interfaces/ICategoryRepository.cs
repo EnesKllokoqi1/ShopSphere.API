@@ -14,7 +14,7 @@ namespace ShopService.Application.Interfaces
         Task<Category?> CreateCategory(Category category);
         Task<bool> DeleteCategory(Guid categoryId);
         Task<IEnumerable<CategoryResponseDTO>> GetAllCategories();
-        Task<Category?> UpdateCategory(Category updatedCategory,Guid categoryId);
+        Task<Category?> UpdateCategory(Category updatedCategory, Guid categoryId);
         Task<Category?> GetCategoryById(Guid categoryId);
     }
 }
