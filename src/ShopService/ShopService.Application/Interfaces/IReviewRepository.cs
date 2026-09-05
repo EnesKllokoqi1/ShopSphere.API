@@ -1,4 +1,4 @@
-﻿using ShopService.Application.DTOs.ReviewDTOs;
+using ShopService.Application.DTOs.ReviewDTOs;
 using ShopService.Domain.Entities;
 using System;
 using System.Collections.Generic;

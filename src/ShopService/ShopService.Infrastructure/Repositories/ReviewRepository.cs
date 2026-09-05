@@ -1,5 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
-
+using Microsoft.EntityFrameworkCore;
 using ShopService.Application.DTOs.CategoryDTOs;
 using ShopService.Application.DTOs.ReviewDTOs;
 using ShopService.Application.Interfaces;
