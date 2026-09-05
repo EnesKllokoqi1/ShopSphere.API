@@ -432,6 +432,10 @@ namespace ShopService.Infrastructure.Data
                     .HasDefaultValueSql("CURRENT_TIMESTAMP")
                     .ValueGeneratedOnAdd();
 
+                entity.Property(e => e.UpdatedAt)
+               .HasDefaultValueSql("CURRENT_TIMESTAMP")
+               .ValueGeneratedOnAddOrUpdate();
+
                 entity.ToTable(t => t.HasCheckConstraint("CK_Review_Rating", "\"Rating\" >= 1 AND \"Rating\" <= 5"));
 
                 entity.HasIndex(e => new { e.UserId, e.ProductId })
