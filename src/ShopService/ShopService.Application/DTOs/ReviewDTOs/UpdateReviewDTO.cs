@@ -9,9 +9,6 @@ namespace ShopService.Application.DTOs.ReviewDTOs
 {
     public class UpdateReviewDTO
     {
-        [Required(ErrorMessage = "Review ID is required")]
-        public Guid Id { get; set; }
-
         [Required(ErrorMessage = "Rating is required")]
         [Range(1, 5, ErrorMessage = "Rating must be between 1 and 5")]
         public int Rating { get; set; }

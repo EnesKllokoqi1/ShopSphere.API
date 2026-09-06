@@ -21,7 +21,7 @@ namespace ShopService.Infrastructure.Repositories
         {
             _appDbContext = appDbContext;
         }
-        public async Task<Review?> CreateReviewAsync(Review review)
+        public async Task<Review> CreateReviewAsync(Review review)
         {
             _appDbContext.Reviews.Add(review);
             await _appDbContext.SaveChangesAsync();
@@ -30,7 +30,7 @@ namespace ShopService.Infrastructure.Repositories
 
         public async Task<bool> DeleteReviewAsync(Guid reviewId)
         {
-            var review = await GetReviewByIdAsync(reviewId);
+            var review = await _appDbContext.Reviews.FindAsync(reviewId);
             if (review is null)
             {
                 return false;
@@ -41,14 +41,18 @@ namespace ShopService.Infrastructure.Repositories
 
         }
 
-        public async Task<IEnumerable<ReviewResponseDTO>> GetAllReviewsAsync()
+        public async Task<IEnumerable<ReviewResponseDTO>> GetAllReviewsAsync(int pageNumber = 1, int pageSize = 20)
         {
+            pageNumber = Math.Max(1, pageNumber);
+            pageSize = Math.Clamp(pageSize, 1, 100); 
             return await _appDbContext.Reviews
-          .AsNoTracking() 
-          .Select(MapToReviewResponseDTO())
-          .ToListAsync();
+                .AsNoTracking()
+                .OrderBy(r => r.CreatedAt)
+                .Skip((pageNumber - 1) * pageSize)
+                .Take(pageSize)
+                .Select(MapToReviewResponseDTO())
+                .ToListAsync();
         }
-
         private static Expression<Func<Review, ReviewResponseDTO>> MapToReviewResponseDTO()
         {
             return review => new ReviewResponseDTO
@@ -67,19 +71,21 @@ namespace ShopService.Infrastructure.Repositories
 
         public async Task<Review?> GetReviewByIdAsync(Guid reviewId)
         {
-            return await _appDbContext.Reviews.FindAsync(reviewId);
+           return await _appDbContext.Reviews
+        .Include(r => r.User)
+        .Include(r => r.Product)
+        .FirstOrDefaultAsync(r => r.Id == reviewId);
         }
 
         public async Task<IEnumerable<ReviewResponseDTO>> GetReviewsByUserIdAsync(Guid userId)
         {
-
             return await _appDbContext.Reviews.AsNoTracking()
                  .Where(e => e.UserId == userId).Select(MapToReviewResponseDTO()).ToListAsync();
         }
 
         public async Task<Review?> UpdateReviewAsync(Review updatedReview, Guid reviewId)
         {
-            var review = await GetReviewByIdAsync(reviewId);
+            var review = await _appDbContext.Reviews.FindAsync(reviewId);
             if (review is null)
             {
                 return null;
