@@ -15,7 +15,7 @@ namespace ShopService.Application.Interfaces
         Task<Review?> UpdateReviewAsync(Review updatedReview,Guid reviewId);
         Task<IEnumerable<ReviewResponseDTO>> GetAllReviewsAsync(int pageNumber,int pageSize);
         Task<Review?> GetReviewByIdAsync(Guid reviewId);
-        Task<IEnumerable<ReviewResponseDTO>> GetReviewsByUserIdAsync(Guid userId);
+        Task<IEnumerable<ReviewResponseDTO>> GetReviewsByUserIdAsync(Guid userId,int pageNumber,int pageSize);
         Task<bool> UserAlreadyReviewedProductAsync(Guid? userId, Guid? productId);
     }
 }

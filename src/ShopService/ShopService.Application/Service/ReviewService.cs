@@ -1,4 +1,4 @@
-﻿using ShopService.Application.DTOs.ReviewDTOs;
+using ShopService.Application.DTOs.ReviewDTOs;
 using ShopService.Application.Interfaces;
 using ShopService.Domain.Entities;
 using System;
@@ -51,10 +51,11 @@ namespace ShopService.Application.Service
             return MapReviewResponseDTO(review);
         }
 
-        public async  Task<IEnumerable<ReviewResponseDTO>> GetReviewsByUserIdAsync(Guid userId)
+        public async  Task<IEnumerable<ReviewResponseDTO>> GetReviewsByUserIdAsync(Guid userId,int pageNumber,int pageSize)
         {
-
-            return await _reviewRepository.GetReviewsByUserIdAsync(userId);
+            pageNumber = Math.Max(1, pageNumber);
+            pageSize = Math.Clamp(pageSize, 1, 50);
+            return await _reviewRepository.GetReviewsByUserIdAsync(userId,pageNumber,pageSize);
 
         }
 

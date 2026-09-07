@@ -40,7 +40,7 @@ namespace ShopService.Infrastructure.Repositories
 
         }
 
-        public async Task<IEnumerable<ReviewResponseDTO>> GetAllReviewsAsync(int pageNumber = 1, int pageSize = 20)
+        public async Task<IEnumerable<ReviewResponseDTO>> GetAllReviewsAsync(int pageNumber = 1, int pageSize = 10)
         {
             pageNumber = Math.Max(1, pageNumber);
             pageSize = Math.Clamp(pageSize, 1, 100); 
@@ -76,10 +76,15 @@ namespace ShopService.Infrastructure.Repositories
         .FirstOrDefaultAsync(r => r.Id == reviewId);
         }
 
-        public async Task<IEnumerable<ReviewResponseDTO>> GetReviewsByUserIdAsync(Guid userId)
+        public async Task<IEnumerable<ReviewResponseDTO>> GetReviewsByUserIdAsync(Guid userId,int pageNumber=1,int pageSize=10)
         {
+            pageNumber = Math.Max(1, pageNumber);
+            pageSize = Math.Clamp(pageSize, 1, 100);
             return await _appDbContext.Reviews.AsNoTracking()
-                 .Where(e => e.UserId == userId).Select(MapToReviewResponseDTO()).ToListAsync();
+                 .Where(e => e.UserId == userId)
+                 .OrderBy(r => r.CreatedAt)
+                .Skip((pageNumber - 1) * pageSize)
+                .Take(pageSize).Select(MapToReviewResponseDTO()).ToListAsync();
         }
 
         public async Task<Review?> UpdateReviewAsync(Review updatedReview, Guid reviewId)
