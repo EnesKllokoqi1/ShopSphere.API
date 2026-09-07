@@ -1,4 +1,4 @@
-﻿using ShopService.Application.DTOs.ReviewDTOs;
+using ShopService.Application.DTOs.ReviewDTOs;
 using ShopService.Application.Interfaces;
 using ShopService.Domain.Entities;
 using System;

@@ -40,7 +40,7 @@ namespace ShopService.Infrastructure.Repositories
 
         }
 
-        public async Task<IEnumerable<ReviewResponseDTO>> GetAllReviewsAsync(int pageNumber = 1, int pageSize = 20)
+        public async Task<IEnumerable<ReviewResponseDTO>> GetAllReviewsAsync(int pageNumber = 1, int pageSize = 10)
         {
             pageNumber = Math.Max(1, pageNumber);
             pageSize = Math.Clamp(pageSize, 1, 100); 
@@ -76,7 +76,7 @@ namespace ShopService.Infrastructure.Repositories
         .FirstOrDefaultAsync(r => r.Id == reviewId);
         }
 
-        public async Task<IEnumerable<ReviewResponseDTO>> GetReviewsByUserIdAsync(Guid userId,int pageNumber=1,int pageSize=20)
+        public async Task<IEnumerable<ReviewResponseDTO>> GetReviewsByUserIdAsync(Guid userId,int pageNumber=1,int pageSize=10)
         {
             pageNumber = Math.Max(1, pageNumber);
             pageSize = Math.Clamp(pageSize, 1, 100);
