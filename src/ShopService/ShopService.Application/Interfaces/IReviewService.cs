@@ -14,6 +14,6 @@ namespace ShopService.Application.Interfaces
         Task<bool> DeleteReviewAsync(Guid reviewId);
         Task<IEnumerable<ReviewResponseDTO>> GetAllReviewsAsync(int pageNumber,int pageSize);
         Task<ReviewResponseDTO?> GetReviewByIdAsync(Guid guid);
-        Task<IEnumerable<ReviewResponseDTO>> GetReviewsByUserIdAsync(Guid userId);
+        Task<IEnumerable<ReviewResponseDTO>> GetReviewsByUserIdAsync(Guid userId,int pageNumber,int pageSize);
     }
 }

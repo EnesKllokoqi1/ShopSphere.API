@@ -101,9 +101,9 @@ namespace ShopService.API.Controllers
         }
         [Authorize]
         [HttpGet("user/{userId:guid}")]
-        public async Task<ActionResult<IEnumerable<ReviewResponseDTO>>> GetReviewsByUserId([FromRoute] Guid userId)
+        public async Task<ActionResult<IEnumerable<ReviewResponseDTO>>> GetReviewsByUserId([FromRoute] Guid userId, [FromQuery] int pageNumber = 1, [FromQuery] int pageSize = 10)
         {
-            var reviews = await _reviewService.GetReviewsByUserIdAsync(userId);
+            var reviews = await _reviewService.GetReviewsByUserIdAsync(userId,pageNumber,pageSize);
             return Ok(new
             {
                 Status = "success",
