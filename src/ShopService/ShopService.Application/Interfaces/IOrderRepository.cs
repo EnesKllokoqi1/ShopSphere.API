@@ -1,4 +1,4 @@
-﻿using ShopService.Application.DTOs.OrderDTOs;
+using ShopService.Application.DTOs.OrderDTOs;
 using ShopService.Domain.Entities;
 using ShopService.Domain.Enums;
 using System;
@@ -13,7 +13,7 @@ namespace ShopService.Application.Interfaces
     {
         Task<Order?> MakeOrderAsync(Order order);
         Task<Order?> GetOrderByIdAsync(Guid orderId);
-        Task<IEnumerable<OrderResponseDTO>> GetAllAsync(int pageNumber,int pageSize);
+        Task<IReadOnlyList<OrderResponseDTO>> GetAllAsync(int pageNumber,int pageSize);
         Task<bool> DeleteOrderAsync(Guid orderId);
         Task<Order?> UpdateOrderAsync(Order updatedOrder, Guid orderId);
         Task<OrderStatus> GetOrderStatusAsync(Guid orderId);
@@ -24,10 +24,10 @@ namespace ShopService.Application.Interfaces
         Task<Order?> DeliverOrderAsync(Guid orderId);    
         Task<Order?> ReturnOrderAsync(Guid orderId, string reason);
         Task<bool> UpdatePaymentStatusAsync(Guid orderId, PaymentStatus status);
-        Task<IEnumerable<OrderResponseDTO>> GetOrdersByUserIdAsync(Guid userId,int pageNumber,int pageSize);
-        Task<IEnumerable<OrderResponseDTO>> GetOrdersByStatusAsync(OrderStatus status,int pageNumber,int pageSize);
+        Task<IReadOnlyList<OrderResponseDTO>> GetOrdersByUserIdAsync(Guid userId,int pageNumber,int pageSize);
+        Task<IReadOnlyList<OrderResponseDTO>> GetOrdersByStatusAsync(OrderStatus status,int pageNumber,int pageSize);
         Task<decimal> GetTotalSpentByUserAsync(Guid userId);
-        Task<IEnumerable<OrderResponseDTO>> GetOrdersByDateRangeAsync(DateTime startDate, DateTime endDate);
+        Task<IReadOnlyList<OrderResponseDTO>> GetOrdersByDateRangeAsync(DateTime startDate, DateTime endDate);
         Task<bool> OrderExistsAsync(Guid orderId);
         Task<int> GetOrderCountByUserAsync(Guid userId);
         Task<int> GetTotalOrderCountAsync();
