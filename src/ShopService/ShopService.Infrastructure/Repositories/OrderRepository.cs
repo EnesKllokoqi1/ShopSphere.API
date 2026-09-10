@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
+using Npgsql;
 using ShopService.Application.DTOs.OrderDTOs;
 using ShopService.Application.DTOs.ReviewDTOs;
 using ShopService.Application.Interfaces;
@@ -268,48 +269,48 @@ namespace ShopService.Infrastructure.Repositories
                         return total;
         }
 
-        public async Task<Order?> MakeOrderAsync(Order order)
+        public async Task<Order?> MakeOrderAsync(Order order,int attempt=1)
         {
+            if (attempt > 5)
+            {
+                throw new InvalidOperationException("Could not generate a unique order number after several tries.");
+            }
+
+            if (order.OrderItems.Any(x => !x.ProductId.HasValue))
+            {
+                return null;
+            }
+
+            var productIds = order.OrderItems
+                .Select(x => x.ProductId!.Value)
+                .Distinct()
+                .ToList();
+
             await using var transaction = await _appDbContext.Database
-        .BeginTransactionAsync(IsolationLevel.Serializable);
+                .BeginTransactionAsync(IsolationLevel.Serializable);
 
             try
             {
-                order.OrderNumber = await GenerateOrderNumberAsync();
-
-                if (await OrderNumberExistsAsync(order.OrderNumber))
-                {
-                    return null;
-                }
-                if (order.OrderItems.Any(x => !x.ProductId.HasValue))
-                {
-                    return null;
-                }
-
-                var productIds = order.OrderItems
-                    .Select(x => x.ProductId!.Value)
-                    .Distinct()
-                    .ToList();
-
                 var products = await _appDbContext.Products
                     .Where(p => productIds.Contains(p.Id))
                     .ToDictionaryAsync(p => p.Id);
-
                 foreach (var item in order.OrderItems)
                 {
                     if (!products.TryGetValue(item.ProductId!.Value, out var product))
                     {
                         return null;
                     }
-
                     if (product.StockQuantity < item.Quantity)
                     {
                         return null;
                     }
-
-                    product.StockQuantity -= item.Quantity;
+                }
+                foreach (var item in order.OrderItems)
+                {
+                    products[item.ProductId!.Value].StockQuantity -= item.Quantity;
                 }
 
+                order.OrderNumber = await GenerateOrderNumberAsync();
                 _appDbContext.Orders.Add(order);
 
                 await _appDbContext.SaveChangesAsync();
@@ -317,15 +318,25 @@ namespace ShopService.Infrastructure.Repositories
 
                 return order;
             }
+            catch (DbUpdateException ex) when (IsUniqueConstraintViolation(ex) || IsSerializationFailure(ex))
+            {
+                await transaction.RollbackAsync();
+                _appDbContext.Entry(order).State = EntityState.Detached;
+                return await MakeOrderAsync(order, attempt + 1);
+            }
             catch
             {
                 await transaction.RollbackAsync();
                 throw;
             }
         }
-        public async Task<bool> OrderNumberExistsAsync(string orderNumber)
+        private static bool IsSerializationFailure(DbUpdateException ex)
         {
-            return await _appDbContext.Orders.AnyAsync(o => o.OrderNumber == orderNumber);
+            return ex.InnerException is PostgresException pgEx && pgEx.SqlState == "40001";
+        }
+        private static bool IsUniqueConstraintViolation(DbUpdateException ex)
+        {
+            return ex.InnerException is PostgresException pgEx && pgEx.SqlState == "23505";
         }
         public async Task<string> GenerateOrderNumberAsync()
         {
@@ -336,15 +347,7 @@ namespace ShopService.Infrastructure.Repositories
                 .CountAsync(o => o.OrderNumber.StartsWith(prefix));
 
             var sequence = count + 1;
-            var orderNumber = $"{prefix}-{sequence:D4}";
-
-            while (await OrderNumberExistsAsync(orderNumber))
-            {
-                sequence++;
-                orderNumber = $"{prefix}-{sequence:D4}";
-            }
-
-            return orderNumber;
+            return $"{prefix}-{sequence:D4}";
         }
 
         public async Task<Order?> ProcessOrderAsync(Guid orderId, string? notes = null)

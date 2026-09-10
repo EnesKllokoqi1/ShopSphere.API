@@ -9,7 +9,7 @@ namespace ShopService.Application.Interfaces
 {
     public interface IOrderRepository
     {
-        Task<Order?> MakeOrderAsync(Order order);
+        Task<Order?> MakeOrderAsync(Order order,int attempt);
         Task<Order?> GetOrderByIdAsync(Guid orderId);
         Task<IEnumerable<OrderResponseDTO>> GetAllAsync(int pageNumber, int pageSize);
         Task<bool> DeleteOrderAsync(Guid orderId);
@@ -27,7 +27,6 @@ namespace ShopService.Application.Interfaces
         Task<decimal?> GetTotalSpentByUserAsync(Guid userId);
         Task<IEnumerable<OrderResponseDTO>> GetOrdersByDateRangeAsync(DateTime startDate, DateTime endDate);
         Task<int> GetOrderCountByUserAsync(Guid userId);
-        Task<bool> OrderNumberExistsAsync(string orderNumber);
         Task<string> GenerateOrderNumberAsync();
         Task<int> GetTotalOrderCountAsync();
         Task<int> GetOrderCountByStatusAsync(OrderStatus status);
