@@ -3,8 +3,6 @@ using ShopService.Domain.Entities;
 using ShopService.Domain.Enums;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace ShopService.Application.Interfaces
@@ -21,7 +19,7 @@ namespace ShopService.Application.Interfaces
         Task<Order?> ConfirmOrderAsync(Guid orderId);
         Task<Order?> ProcessOrderAsync(Guid orderId, string? notes = null);
         Task<Order?> ShipOrderAsync(Guid orderId, string trackingNumber, string? notes = null);
-        Task<Order?> DeliverOrderAsync(Guid orderId, string? deliveryNotes=null);
+        Task<Order?> DeliverOrderAsync(Guid orderId, string? deliveryNotes = null);
         Task<Order?> ReturnOrderAsync(Guid orderId, string reason);
         Task<bool> UpdatePaymentStatusAsync(Guid orderId, PaymentStatus status);
         Task<IEnumerable<OrderResponseDTO>> GetOrdersByUserIdAsync(Guid userId, int pageNumber, int pageSize);
