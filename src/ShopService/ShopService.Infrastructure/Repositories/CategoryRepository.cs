@@ -50,8 +50,10 @@ namespace ShopService.Infrastructure.Repositories
         {
             return await _appDbContext.Categories
                 .AsNoTracking()
-                .Select(MapToCategoryResponseDTO())
-                .ToListAsync();
+                  .Include(c => c.ParentCategory)  
+                  .Include(c => c.SubCategories)
+                  .Select(MapToCategoryResponseDTO())
+                  .ToListAsync();
         }
 
         private static Expression<Func<Category, CategoryResponseDTO>> MapToCategoryResponseDTO()
@@ -83,7 +85,10 @@ namespace ShopService.Infrastructure.Repositories
 
         public async Task<Category?> GetCategoryById(Guid categoryId)
         {
-            return await _appDbContext.Categories.FindAsync(categoryId);
+            return await _appDbContext.Categories
+        .Include(c => c.ParentCategory) 
+        .Include(c => c.SubCategories)   
+        .FirstOrDefaultAsync(c => c.Id == categoryId);
         }
 
         public async Task<Category?> UpdateCategory(Category updatedCategory, Guid categoryId)
