@@ -28,6 +28,7 @@ namespace ShopService.Application.Service
             {
                 return false;
             }
+            if (product.StockQuantity + quantityChange < 0) return false;
             product.StockQuantity += quantityChange;
             await _appDbContext.SaveChangesAsync();
             return true;

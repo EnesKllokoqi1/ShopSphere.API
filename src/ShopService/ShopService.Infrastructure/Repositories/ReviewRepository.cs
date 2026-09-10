@@ -46,6 +46,8 @@ namespace ShopService.Infrastructure.Repositories
             pageSize = Math.Clamp(pageSize, 1, 100); 
             return await _appDbContext.Reviews
                 .AsNoTracking()
+                .Include(r => r.User)
+                .Include(r => r.Product)
                 .OrderBy(r => r.CreatedAt)
                 .Skip((pageNumber - 1) * pageSize)
                 .Take(pageSize)
