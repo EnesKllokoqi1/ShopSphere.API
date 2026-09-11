@@ -86,15 +86,15 @@ namespace ShopService.Infrastructure.Repositories
         public async Task<Order?> ConfirmOrderAsync(Guid orderId)
         {
             var order = await GetOrderByIdAsync(orderId);
-            if (order is null) return null; 
-            if (order.OrderStatus!=OrderStatus.Pending)
+            if (order is null) return null;
+            if (order.OrderStatus != OrderStatus.Pending)
             {
                 return null;
             }
             order.OrderStatus = OrderStatus.Confirmed;
             await _appDbContext.SaveChangesAsync();
             return order;
-          
+
         }
 
         public async Task<bool> DeleteOrderAsync(Guid orderId)
@@ -121,15 +121,15 @@ namespace ShopService.Infrastructure.Repositories
             order.OrderStatus = OrderStatus.Delivered;
             await _appDbContext.SaveChangesAsync();
             return order;
-           
+
         }
 
-        public async Task<IEnumerable<OrderResponseDTO>> GetAllAsync(int pageNumber, int pageSize)
+        public async Task<IEnumerable<OrderResponseDTO>> GetAllAsync(int pageNumber=1, int pageSize=10)
         {
             return await _appDbContext.Orders
                 .AsNoTracking()
-                  .Include(o => o.User) 
-                  .Include(o => o.OrderItems)  
+                  .Include(o => o.User)
+                  .Include(o => o.OrderItems)
                   .ThenInclude(i => i.Product)
                   .OrderBy(e => e.CreatedAt)
                   .Skip((pageNumber - 1) * pageSize)
@@ -177,7 +177,7 @@ namespace ShopService.Infrastructure.Repositories
             return await _appDbContext.Orders
                    .Include(o => o.User)
                    .Include(o => o.OrderItems)
-                   .ThenInclude(i => i.Product).FirstOrDefaultAsync(o=>o.Id==orderId);
+                   .ThenInclude(i => i.Product).FirstOrDefaultAsync(o => o.Id == orderId);
         }
 
         public async Task<int> GetOrderCountByDateRangeAsync(DateTime startDate, DateTime endDate)
@@ -190,7 +190,7 @@ namespace ShopService.Infrastructure.Repositories
         public async Task<int> GetOrderCountByStatusAsync(OrderStatus status)
         {
             var count = await _appDbContext.Orders
-             .CountAsync(o =>o.OrderStatus==status);
+             .CountAsync(o => o.OrderStatus == status);
             return count;
         }
 
@@ -223,7 +223,7 @@ namespace ShopService.Infrastructure.Repositories
                 .ThenInclude(p => p.Product)
                 .Where(o => o.OrderStatus == status)
                 .OrderBy(o => o.CreatedAt)
-                .Skip((pageNumber-1)*pageSize)
+                .Skip((pageNumber - 1) * pageSize)
                 .Take(pageSize)
                 .Select(MapToOrderResponseDTO())
                 .ToListAsync();
@@ -266,10 +266,10 @@ namespace ShopService.Infrastructure.Repositories
             var total = await _appDbContext.Orders
                        .Where(o => o.UserId == userId)
                        .SumAsync(o => (decimal?)o.TotalAmount);
-                        return total;
+            return total;
         }
 
-        public async Task<Order?> MakeOrderAsync(Order order,int attempt=1)
+        public async Task<Order?> MakeOrderAsync(Order order, int attempt = 1)
         {
             if (attempt > 5)
             {
@@ -439,7 +439,7 @@ namespace ShopService.Infrastructure.Repositories
             if (order.OrderStatus != OrderStatus.Processing) return null;
             if (!string.IsNullOrEmpty(notes))
             {
-                order.Notes = notes;    
+                order.Notes = notes;
             }
             order.TrackingNumber = trackingNumber;
             order.OrderStatus = OrderStatus.Shipped;
