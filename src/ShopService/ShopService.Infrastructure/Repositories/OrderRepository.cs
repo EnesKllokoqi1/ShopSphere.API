@@ -124,7 +124,7 @@ namespace ShopService.Infrastructure.Repositories
 
         }
 
-        public async Task<IEnumerable<OrderResponseDTO>> GetAllAsync(int pageNumber, int pageSize)
+        public async Task<IEnumerable<OrderResponseDTO>> GetAllAsync(int pageNumber=1, int pageSize=10)
         {
             return await _appDbContext.Orders
                 .AsNoTracking()
