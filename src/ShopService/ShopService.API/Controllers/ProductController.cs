@@ -15,12 +15,14 @@ namespace ShopService.API.Controllers
         {
             _productService = productService;
         }
+        [Authorize]
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<ProductResponseDTO>>> GetAllProducts()
+        public async Task<ActionResult<IEnumerable<ProductResponseDTO>>> GetAllProducts([FromQuery] int pageNumber = 1, [FromQuery] int pageSize = 10)
         {
-            var products = await _productService.GetAllProducts();
+            var products = await _productService.GetAllProducts(pageNumber, pageSize);
             return Ok(products);
         }
+        [Authorize]
         [HttpGet("{productId:guid}")]
         public async Task<ActionResult<ProductResponseDTO>> GetProductById([FromRoute] Guid productId)
         {
@@ -32,14 +34,15 @@ namespace ShopService.API.Controllers
 
             return Ok(product);
         }
+        [Authorize]
         [HttpGet("categories")]
-        public async Task<ActionResult<IEnumerable<ProductCategoryResponseDTO>>> GetProductCategories()
+        public async Task<ActionResult<IEnumerable<ProductCategoryResponseDTO>>> GetProductCategories([FromQuery] int pageNumber = 1, [FromQuery] int pageSize = 10)
         {
-            var categories = await _productService.GetProductCategories();
+            var categories = await _productService.GetProductCategories(pageNumber,pageSize);
             return Ok(categories);
         }
-        [HttpPost]
         [Authorize(Policy = "AdminOnly")]
+        [HttpPost]
         public async Task<ActionResult<ProductResponseDTO>> CreateProduct([FromBody] CreateProductDTO createProductDTO)
         {
             var createdProduct = await _productService.CreateProduct(createProductDTO);
@@ -54,8 +57,8 @@ namespace ShopService.API.Controllers
                 createdProduct
             );
         }
-        [HttpPut("{productId:guid}")]
         [Authorize(Policy = "AdminOnly")]
+        [HttpPut("{productId:guid}")]
         public async Task<ActionResult<ProductResponseDTO>> UpdateProduct([FromRoute] Guid productId, [FromBody] UpdateProductDTO updateProductDTO)
         {
             var updatedProduct = await _productService.UpdateProductDto(updateProductDTO, productId);
@@ -66,8 +69,8 @@ namespace ShopService.API.Controllers
 
             return Ok(updatedProduct);
         }
-        [HttpDelete("{productId:guid}")]
         [Authorize(Policy = "AdminOnly")]
+        [HttpDelete("{productId:guid}")]
         public async Task<ActionResult> DeleteProduct([FromRoute] Guid productId)
         {
             var success = await _productService.DeleteProduct(productId);
@@ -78,8 +81,8 @@ namespace ShopService.API.Controllers
 
             return NoContent();
         }
-        [HttpPut("{productId:guid}/stock")]
         [Authorize(Policy = "AdminOnly")]
+        [HttpPut("{productId:guid}/stock")]
         public async Task<ActionResult> AdjustStock([FromRoute] Guid productId, [FromBody] AdjustStockDTO adjustStockDto)
         {
             var success = await _productService.AdjustStockAsync(productId, adjustStockDto.QuantityChange);
@@ -92,21 +95,21 @@ namespace ShopService.API.Controllers
         }
         [HttpGet("low-stock")]
         [Authorize(Policy = "AdminOnly")]
-        public async Task<ActionResult<IEnumerable<ProductResponseDTO>>> GetLowStockProducts()
+        public async Task<ActionResult<IEnumerable<ProductResponseDTO>>> GetLowStockProducts([FromQuery] int pageNumber = 1, [FromQuery] int pageSize = 10)
         {
-            var lowStockProducts = await _productService.GetLowStockProductsAsync();
+            var lowStockProducts = await _productService.GetLowStockProductsAsync(pageNumber,pageSize);
             return Ok(lowStockProducts);
         }
         [HttpGet("featured")]
-        public async Task<ActionResult<IEnumerable<ProductResponseDTO>>> GetFeaturedProducts()
+        public async Task<ActionResult<IEnumerable<ProductResponseDTO>>> GetFeaturedProducts([FromQuery] int pageNumber = 1, [FromQuery] int pageSize = 10)
         {
-            var featuredProducts = await _productService.GetFeaturedProducts();
+            var featuredProducts = await _productService.GetFeaturedProducts(pageNumber, pageSize);
             return Ok(featuredProducts);
         }
         [HttpGet("{productId:guid}/reviews")]
-        public async Task<ActionResult<IEnumerable<ProductReviewResponseDTO>>> GetProductReviews([FromRoute] Guid productId)
+        public async Task<ActionResult<IEnumerable<ProductReviewResponseDTO>>> GetProductReviews([FromRoute] Guid productId, [FromQuery] int pageNumber = 1, [FromQuery] int pageSize = 10)
         {
-            var productReviews = await _productService.GetProductReviews(productId);
+            var productReviews = await _productService.GetProductReviews(productId, pageNumber, pageSize);
             return Ok(productReviews);
         }
     }

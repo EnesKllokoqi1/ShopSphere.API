@@ -66,26 +66,38 @@ namespace ShopService.Application.Service
             return true;
         }
 
-        public async Task<IEnumerable<ProductResponseDTO>> GetAllProducts()
+        public async Task<IEnumerable<ProductResponseDTO>> GetAllProducts(int pageNumber = 1, int pageSize = 10)
         {
             return await _appDbContext.Products
                 .AsNoTracking()
-                .Select(MapToProductResponseDTO())
-                .ToListAsync();
+                  .OrderBy(e => e.CreatedAt)
+                  .ThenBy(e => e.Id)
+                  .Skip((pageNumber - 1) * pageSize)
+                  .Take(pageSize)
+                  .Select(MapToProductResponseDTO())
+                  .ToListAsync();
         }
 
-        public async Task<IEnumerable<ProductResponseDTO>> GetFeaturedProducts()
+        public async Task<IEnumerable<ProductResponseDTO>> GetFeaturedProducts(int pageNumber = 1, int pageSize = 10)
         {
             return await _appDbContext.Products
                 .Where(e => e.IsFeatured)
+                .OrderBy(e => e.CreatedAt)
+                .ThenBy(e => e.Id)
+                .Skip((pageNumber - 1) * pageSize)
+                  .Take(pageSize)
                 .Select(MapToProductResponseDTO())
                 .ToListAsync();
         }
 
-        public async Task<IEnumerable<ProductResponseDTO>> GetLowStockProductsAsync()
+        public async Task<IEnumerable<ProductResponseDTO>> GetLowStockProductsAsync(int pageNumber = 1, int pageSize = 10)
         {
             return await _appDbContext.Products
                 .Where(e => e.StockQuantity <= (e.LowStockThreshold ?? 10))
+                .OrderBy(e => e.CreatedAt)
+                .ThenBy(e => e.Id)
+                  .Skip((pageNumber - 1) * pageSize)
+                  .Take(pageSize)
                 .Select(MapToProductResponseDTO())
                 .ToListAsync();
         }
@@ -95,9 +107,13 @@ namespace ShopService.Application.Service
             return await _appDbContext.Products.FindAsync(productId);
         }
 
-        public async Task<IEnumerable<ProductCategoryResponseDTO>> GetProductCategories()
+        public async Task<IEnumerable<ProductCategoryResponseDTO>> GetProductCategories(int pageNumber = 1, int pageSize = 10)
         {
             return await _appDbContext.Categories
+                .OrderBy(e => e.CreatedAt)
+                .ThenBy(e => e.Id)
+                  .Skip((pageNumber - 1) * pageSize)
+                  .Take(pageSize)
                 .Select(c => new ProductCategoryResponseDTO
                 {
                     Id = c.Id,
@@ -131,10 +147,14 @@ namespace ShopService.Application.Service
                 .ToListAsync();
         }
 
-        public async Task<IEnumerable<ProductReviewResponseDTO>> GetProductReviews(Guid productId)
+        public async Task<IEnumerable<ProductReviewResponseDTO>> GetProductReviews(Guid productId, int pageNumber = 1, int pageSize = 10)
         {
             return await _appDbContext.Reviews
                 .Where(e => e.ProductId == productId)
+               .OrderBy(e => e.CreatedAt)
+               .ThenBy(e => e.Id)
+                  .Skip((pageNumber - 1) * pageSize)
+                  .Take(pageSize)
                 .Select(e => new ProductReviewResponseDTO
                 {
                     ProductId = e.ProductId,
