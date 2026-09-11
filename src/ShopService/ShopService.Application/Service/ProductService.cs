@@ -54,33 +54,43 @@ namespace ShopService.Application.Service
             return await _productRepository.DeleteProduct(guid);
         }
 
-        public async Task<IEnumerable<ProductResponseDTO>> GetAllProducts()
+        public async Task<IEnumerable<ProductResponseDTO>> GetAllProducts(int pageNumber, int pageSize)
         {
-            var products = await _productRepository.GetAllProducts();
+            pageNumber = Math.Max(1, pageNumber);
+            pageSize = Math.Clamp(pageSize, 1, 100);
+            var products = await _productRepository.GetAllProducts(pageNumber,pageSize);
             return products;
         }
 
-        public async Task<IEnumerable<ProductResponseDTO>> GetFeaturedProducts()
+        public async Task<IEnumerable<ProductResponseDTO>> GetFeaturedProducts(int pageNumber, int pageSize)
         {
-            var featuredProducts = await _productRepository.GetFeaturedProducts();
+            pageNumber = Math.Max(1, pageNumber);
+            pageSize = Math.Clamp(pageSize, 1, 100);
+            var featuredProducts = await _productRepository.GetFeaturedProducts(pageNumber,pageSize);
             return featuredProducts;
         }
 
-        public async Task<IEnumerable<ProductResponseDTO>> GetLowStockProductsAsync()
+        public async Task<IEnumerable<ProductResponseDTO>> GetLowStockProductsAsync(int pageNumber, int pageSize)
         {
-            var lowStockProducts = await _productRepository.GetLowStockProductsAsync();
+            pageNumber = Math.Max(1, pageNumber);
+            pageSize = Math.Clamp(pageSize, 1, 100);
+            var lowStockProducts = await _productRepository.GetLowStockProductsAsync(pageNumber, pageSize);
             return lowStockProducts;
         }
 
-        public async Task<IEnumerable<ProductCategoryResponseDTO>> GetProductCategories()
+        public async Task<IEnumerable<ProductCategoryResponseDTO>> GetProductCategories(int pageNumber, int pageSize)
         {
-            var productCategories = await _productRepository.GetProductCategories();
+            pageNumber = Math.Max(1, pageNumber);
+            pageSize = Math.Clamp(pageSize, 1, 100);
+            var productCategories = await _productRepository.GetProductCategories(pageNumber, pageSize);
             return productCategories;
         }
 
-        public async Task<IEnumerable<ProductReviewResponseDTO>> GetProductReviews(Guid guid)
+        public async Task<IEnumerable<ProductReviewResponseDTO>> GetProductReviews(Guid guid, int pageNumber, int pageSize)
         {
-            var productReviews = await _productRepository.GetProductReviews(guid);
+            pageNumber = Math.Max(1, pageNumber);
+            pageSize = Math.Clamp(pageSize, 1, 100);
+            var productReviews = await _productRepository.GetProductReviews(guid, pageNumber, pageSize);
             return productReviews;
         }
 
