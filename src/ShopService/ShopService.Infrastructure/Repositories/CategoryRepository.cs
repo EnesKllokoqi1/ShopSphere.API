@@ -24,12 +24,15 @@ namespace ShopService.Infrastructure.Repositories
         }
         public async Task<Category?> CreateCategory(Category category)
         {
-            bool check = await _appDbContext.Categories.AnyAsync(e => e.Name == category.Name);
+            bool check = await _appDbContext.Categories
+                  .Include(c => c.ParentCategory)
+                  .Include(c => c.SubCategories)
+                  .AnyAsync(e => e.Name == category.Name);
             if (check)
             {
                 return null;
             }
-            await _appDbContext.Categories.AddAsync(category);
+             _appDbContext.Categories.Add(category);
             await _appDbContext.SaveChangesAsync();
             return category;
         }
@@ -46,12 +49,16 @@ namespace ShopService.Infrastructure.Repositories
             return true;
         }
 
-        public async Task<IEnumerable<CategoryResponseDTO>> GetAllCategories()
+        public async Task<IEnumerable<CategoryResponseDTO>> GetAllCategories(int pageNumber = 1, int pageSize = 10)
         {
             return await _appDbContext.Categories
                 .AsNoTracking()
                   .Include(c => c.ParentCategory)  
                   .Include(c => c.SubCategories)
+                  .OrderBy(e => e.CreatedAt)
+                  .ThenBy(e => e.Id)
+                  .Skip((pageNumber - 1) * pageSize)
+                  .Take(pageSize)
                   .Select(MapToCategoryResponseDTO())
                   .ToListAsync();
         }
@@ -93,7 +100,7 @@ namespace ShopService.Infrastructure.Repositories
 
         public async Task<Category?> UpdateCategory(Category updatedCategory, Guid categoryId)
         {
-            var theCategory = await _appDbContext.Categories.FirstOrDefaultAsync(c => c.Id == categoryId);
+            var theCategory = await GetCategoryById(categoryId);
             if (theCategory is null)
             {
                 return null;
