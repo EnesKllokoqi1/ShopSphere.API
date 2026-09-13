@@ -61,13 +61,14 @@ namespace ShopService.Application.Service
 
         public async Task<ReviewResponseDTO?> UpdateReviewAsync(UpdateReviewDTO updateReviewDTO, Guid reviewId)
         {
-            var updatedReview = MapUpdateReviewDTO(updateReviewDTO);
-            var review = await _reviewRepository.UpdateReviewAsync(updatedReview,reviewId);
-            if (review is null)
+            var review = MapUpdateReviewDTO(updateReviewDTO);
+            var result = await _reviewRepository.UpdateReviewAsync(review, reviewId);
+            if (result is null)
             {
                 return null;
             }
-            return MapReviewResponseDTO(review);
+            var updatedReview = await _reviewRepository.GetReviewByIdAsync(result.Id);
+            return MapReviewResponseDTO(updatedReview);
         }
         private Review MapMakeReviewDTO(MakeReviewDTO makeReviewDTO)
         {

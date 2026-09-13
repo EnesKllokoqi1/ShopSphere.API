@@ -19,11 +19,12 @@ namespace ShopService.Application.Service
         public async Task<CategoryResponseDTO?> CreateCategory(CreateCategoryDTO createCategoryDTO)
         {
             var category = MapCategoryFromCreateDTO(createCategoryDTO);
-            var createdCategory = await _categoryRepository.CreateCategory(category);
-            if (createdCategory is null)
+            var result = await _categoryRepository.CreateCategory(category);
+            if (result is null)
             {
                 return null;
             }
+            var createdCategory = await _categoryRepository.GetCategoryById(result.Id);
             return MapCategoryResponseDTO(createdCategory);
         }
 
@@ -50,14 +51,15 @@ namespace ShopService.Application.Service
             return MapCategoryResponseDTO(categoryById);
         }
 
-        public async Task<CategoryResponseDTO?> UpdateCategory(UpdateCategoryDTO updatedCategory, Guid categoryId)
+        public async Task<CategoryResponseDTO?> UpdateCategory(UpdateCategoryDTO updatedCategoryDTO, Guid categoryId)
         {
-            var category = MapCategoryFromUpdateDTO(updatedCategory);
+            var category = MapCategoryFromUpdateDTO(updatedCategoryDTO);
             var result = await _categoryRepository.UpdateCategory(category,categoryId);
             if (result is null)
             {
                 return null;
             }
+            var updatedCategory = await _categoryRepository.GetCategoryById(result.Id);
             return MapCategoryResponseDTO(result);
         }
         private Category MapCategoryFromCreateDTO(CreateCategoryDTO createCategoryDTO)

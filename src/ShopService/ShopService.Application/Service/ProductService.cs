@@ -41,12 +41,13 @@ namespace ShopService.Application.Service
                 Brand = createProductDTO.Brand,
                 CategoryId = createProductDTO.CategoryId,
             };
-            var product1 = await _productRepository.CreateProduct(product);
-            if (product1 is null)
+            var result = await _productRepository.CreateProduct(product);
+            if (result is null)
             {
                 return null;
             }
-            return MapToDTO(product1);
+            var createdProduct = await _productRepository.GetProductById(result.Id);
+            return MapToDTO(createdProduct);
         }
 
         public async Task<bool> DeleteProduct(Guid guid)
@@ -122,11 +123,12 @@ namespace ShopService.Application.Service
                 Brand = updateProductDTO.Brand,
                 CategoryId = updateProductDTO.CategoryId,
             };
-            var updatedProduct = await _productRepository.UpdateProduct(product,productId);
-            if (updatedProduct is null)
+            var result = await _productRepository.UpdateProduct(product,productId);
+            if (result is null)
             {
                 return null;
             }
+            var updatedProduct = await _productRepository.GetProductById(result.Id);
             return MapToDTO(updatedProduct);
         }
         public static ProductResponseDTO MapToDTO(Product product)
