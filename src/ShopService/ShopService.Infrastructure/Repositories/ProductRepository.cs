@@ -104,7 +104,12 @@ namespace ShopService.Application.Service
 
         public async Task<Product?> GetProductById(Guid productId)
         {
-            return await _appDbContext.Products.FindAsync(productId);
+            return await _appDbContext.Products
+                .Include(e=>e.OrderItems)
+                .Include(e=>e.CartItems)
+                .Include(e=>e.Category)
+                .Include(e=>e.Reviews)
+                .FirstOrDefaultAsync(e =>e.Id==productId);
         }
 
         public async Task<IEnumerable<ProductCategoryResponseDTO>> GetProductCategories(int pageNumber = 1, int pageSize = 10)
