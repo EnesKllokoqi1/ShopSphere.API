@@ -10,10 +10,10 @@ namespace ShopService.Application.Interfaces
 {
     public interface ICategoryService
     {
-        Task<CategoryResponseDTO?> CreateCategory(CreateCategoryDTO createCategoryDTO);
+        Task<CategoryResponseDTO?> CreateCategory(CreateCategoryDTO createCategoryDTO); 
         Task<CategoryResponseDTO?> UpdateCategory(UpdateCategoryDTO updatedCategory,Guid categoryId);
         Task<bool> DeleteCategory(Guid guid);
-        Task<IEnumerable<CategoryResponseDTO>> GetAllCategories();
+        Task<IEnumerable<CategoryResponseDTO>> GetAllCategories(int pageNumber,int pageSize);
         Task<CategoryResponseDTO?> GetCategoryById(Guid categoryId);
     }
 }

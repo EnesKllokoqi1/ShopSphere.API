@@ -110,6 +110,7 @@ namespace ShopService.Application.Service
         public async Task<IEnumerable<ProductCategoryResponseDTO>> GetProductCategories(int pageNumber = 1, int pageSize = 10)
         {
             return await _appDbContext.Categories
+                .Include(e=>e.Products)
                 .OrderBy(e => e.CreatedAt)
                 .ThenBy(e => e.Id)
                   .Skip((pageNumber - 1) * pageSize)

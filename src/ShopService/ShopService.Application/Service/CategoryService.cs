@@ -32,9 +32,11 @@ namespace ShopService.Application.Service
             return await _categoryRepository.DeleteCategory(guid);
         }
 
-        public async Task<IEnumerable<CategoryResponseDTO>> GetAllCategories()
+        public async Task<IEnumerable<CategoryResponseDTO>> GetAllCategories(int pageNumber, int pageSize)
         {
-            var allCategories = await _categoryRepository.GetAllCategories();
+            pageNumber = Math.Max(1, pageNumber);
+            pageSize = Math.Clamp(pageSize, 1, 100);
+            var allCategories = await _categoryRepository.GetAllCategories(pageNumber,pageSize);
             return allCategories;
         }
 

@@ -60,12 +60,14 @@ namespace ShopService.API.Controllers
             }
             return NoContent();
         }
+        [Authorize]
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<CategoryResponseDTO>>> GetAllCategories()
+        public async Task<ActionResult<IEnumerable<CategoryResponseDTO>>> GetAllCategories([FromQuery] int pageNumber = 1, [FromQuery] int pageSize =10)
         {
-            var categories = await _categoryService.GetAllCategories();
+            var categories = await _categoryService.GetAllCategories(pageNumber,pageSize);
             return Ok(categories);
         }
+        [Authorize]
         [HttpGet("{categoryId:guid}")]
         public async Task<ActionResult<CategoryResponseDTO>> GetCategoryById([FromRoute] Guid categoryId)
         {
