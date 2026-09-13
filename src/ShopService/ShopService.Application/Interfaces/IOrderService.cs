@@ -8,7 +8,7 @@ namespace ShopService.Application.Interfaces
 {
     public interface IOrderService
     {
-        Task<OrderResponseDTO?> MakeOrderAsync(PlaceOrderDTO placeOrderDTO);
+        Task<OrderResponseDTO?> MakeOrderAsync(PlaceOrderDTO placeOrderDTO,Guid userID);
         Task<OrderResponseDTO?> GetOrderByIdAsync(Guid orderId);
         Task<IEnumerable<OrderResponseDTO>> GetAllAsync(int pageNumber, int pageSize);
         Task<bool> DeleteOrderAsync(Guid orderId);

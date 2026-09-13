@@ -458,6 +458,7 @@ namespace ShopService.Infrastructure.Repositories
             order.ShippingAddress = updatedOrder.ShippingAddress;
             order.ShippingMethod = updatedOrder.ShippingMethod;
             order.BillingAddress = updatedOrder.BillingAddress;
+            order.TrackingNumber = updatedOrder.TrackingNumber;
             order.Notes = updatedOrder.Notes;
             await _appDbContext.SaveChangesAsync();
             return order;

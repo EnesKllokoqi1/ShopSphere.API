@@ -12,12 +12,13 @@ namespace ShopService.Application.DTOs.OrderDTOs
     {
         [EnumDataType(typeof(ShippingMethod))]
         public ShippingMethod? ShippingMethod { get; set; }
-
+        [Required]
         [StringLength(500)]
-        public string? ShippingAddress { get; set; }
+        public string ShippingAddress { get; set; } = null!;
 
+        [Required]
         [StringLength(500)]
-        public string? BillingAddress { get; set; }
+        public string BillingAddress { get; set; } = null!;
 
         [StringLength(50)]
         public string? TrackingNumber { get; set; }

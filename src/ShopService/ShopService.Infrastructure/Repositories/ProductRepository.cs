@@ -151,6 +151,7 @@ namespace ShopService.Application.Service
         public async Task<IEnumerable<ProductReviewResponseDTO>> GetProductReviews(Guid productId, int pageNumber = 1, int pageSize = 10)
         {
             return await _appDbContext.Reviews
+                .Include(e=>e.Product)
                 .Where(e => e.ProductId == productId)
                .OrderBy(e => e.CreatedAt)
                .ThenBy(e => e.Id)
