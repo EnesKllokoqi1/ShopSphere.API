@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.EntityFrameworkCore;
 using Npgsql;
 using ShopService.Application.DTOs.OrderDTOs;
@@ -269,7 +270,7 @@ namespace ShopService.Infrastructure.Repositories
             return total;
         }
 
-        public async Task<Order?> MakeOrderAsync(Order order, int attempt = 1)
+        public async Task<Order> MakeOrderAsync(Order order, int attempt = 1)
         {
             if (attempt > 5)
             {
@@ -278,7 +279,7 @@ namespace ShopService.Infrastructure.Repositories
 
             if (order.OrderItems.Any(x => !x.ProductId.HasValue))
             {
-                return null;
+                throw new InvalidOperationException("Product Id has no value");
             }
 
             var productIds = order.OrderItems
@@ -298,11 +299,11 @@ namespace ShopService.Infrastructure.Repositories
                 {
                     if (!products.TryGetValue(item.ProductId!.Value, out var product))
                     {
-                        return null;
+                        throw new InvalidOperationException("No such product with this Id");
                     }
                     if (product.StockQuantity < item.Quantity)
                     {
-                        return null;
+                        throw new InvalidOperationException("Product has run out of stocks");
                     }
                 }
                 foreach (var item in order.OrderItems)

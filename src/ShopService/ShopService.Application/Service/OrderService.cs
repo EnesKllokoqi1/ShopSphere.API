@@ -143,11 +143,11 @@ namespace ShopService.Application.Service
             var order = MapToOrder(placeOrderDTO,userId);
             int attempt = 0;
             var result = await _orderRepository.MakeOrderAsync(order,attempt);
-            if (result is null)
-            {
-                return null;
-            }
             var createdOrder = await _orderRepository.GetOrderByIdAsync(result.Id);
+            if (createdOrder is null)
+            {
+                throw new InvalidOperationException("Order was created but could not be retrieved.");
+            }
             return MapToOrderResponseDto(createdOrder);
         }
 
