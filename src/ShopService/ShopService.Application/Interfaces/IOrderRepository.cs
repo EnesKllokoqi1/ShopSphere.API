@@ -9,7 +9,7 @@ namespace ShopService.Application.Interfaces
 {
     public interface IOrderRepository
     {
-        Task<Order?> MakeOrderAsync(Order order,int attempt);
+        Task<Order> MakeOrderAsync(Order order,int attempt);
         Task<Order?> GetOrderByIdAsync(Guid orderId);
         Task<IEnumerable<OrderResponseDTO>> GetAllAsync(int pageNumber, int pageSize);
         Task<bool> DeleteOrderAsync(Guid orderId);
