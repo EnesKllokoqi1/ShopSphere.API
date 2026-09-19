@@ -28,6 +28,8 @@ builder.Services.AddScoped<IReviewRepository,ReviewRepository>();
 builder.Services.AddScoped<IReviewService, ReviewService>();
 builder.Services.AddScoped<IOrderService, OrderService>();
 builder.Services.AddScoped<IOrderRepository, OrderRepository>();
+builder.Services.AddScoped<ICouponRepository, CouponRepository>();
+builder.Services.AddScoped<ICouponService, CouponService>();
 builder.Services.AddOpenApi();
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
