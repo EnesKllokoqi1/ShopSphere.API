@@ -370,6 +370,11 @@ namespace ShopService.Infrastructure.Data
                 entity.Property(e => e.UpdatedAt)
                     .HasDefaultValueSql("CURRENT_TIMESTAMP")
                     .ValueGeneratedOnAddOrUpdate();
+                entity.HasOne(e => e.Coupon)
+                      .WithMany()
+                      .HasForeignKey(e => e.CouponId)
+                      .OnDelete(DeleteBehavior.Restrict);
+                entity.HasIndex(e => new { e.CouponId, e.UserId });
 
                 entity.HasOne(e => e.User)
                     .WithMany(e => e.Orders)

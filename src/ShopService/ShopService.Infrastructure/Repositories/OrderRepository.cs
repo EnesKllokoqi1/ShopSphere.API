@@ -21,14 +21,16 @@ namespace ShopService.Infrastructure.Repositories
     public class OrderRepository : IOrderRepository
     {
         private readonly AppDbContext _appDbContext;
-        public OrderRepository(AppDbContext appDbContext)
+        private readonly ICouponRepository _couponRepository;
+        public OrderRepository(AppDbContext appDbContext, ICouponRepository couponRepository)
         {
             _appDbContext = appDbContext;
+            _couponRepository = couponRepository;
         }
         public async Task<Order?> CancelOrderAsync(Guid orderId, string? reason = null)
         {
             await using var transaction = await _appDbContext.Database
-           .BeginTransactionAsync(IsolationLevel.Serializable);
+                .BeginTransactionAsync(IsolationLevel.Serializable);
 
             try
             {
@@ -68,6 +70,11 @@ namespace ShopService.Infrastructure.Repositories
                     }
 
                     product.StockQuantity += item.Quantity;
+                }
+
+                if (order.CouponId != Guid.Empty)
+                {
+                    await _couponRepository.DecrementUsedCountAsync(order.CouponId);
                 }
 
                 order.OrderStatus = OrderStatus.Cancelled;
@@ -309,6 +316,15 @@ namespace ShopService.Infrastructure.Repositories
                 foreach (var item in order.OrderItems)
                 {
                     products[item.ProductId!.Value].StockQuantity -= item.Quantity;
+                }
+
+                if (order.CouponId != Guid.Empty)
+                {
+                    var incremented = await _couponRepository.TryIncrementUsedCountAsync(order.CouponId);
+                    if (!incremented)
+                    {
+                        throw new InvalidOperationException("Coupon is invalid or has reached its usage limit");
+                    }
                 }
 
                 order.OrderNumber = await GenerateOrderNumberAsync();
