@@ -182,14 +182,7 @@ namespace ShopService.Infrastructure.Repositories
             {
                 return null;
             }
-            var newCode = updateCouponDTO.Code?.Trim();
 
-            if (newCode is not null
-                && newCode != existing.Code
-                && await _couponRepository.CodeExistsAsync(newCode))
-            {
-                return null;
-            }
             existing.Code = updatedCoupon.Code;
             existing.Name = updatedCoupon.Name;
             existing.Description = updatedCoupon.Description;
