@@ -23,6 +23,6 @@ namespace ShopService.Application.Interfaces
         Task<bool> RemoveProductFromCouponAsync(Guid couponId, Guid productId);
         Task<int> GetUserUsageCountAsync(Guid couponId, Guid userId);
         Task<bool> TryIncrementUsedCountAsync(Guid couponId);
-        Task DecrementUsedCountAsync(Guid couponId);
+        Task<bool> DecrementUsedCountAsync(Guid couponId);
     }
 }

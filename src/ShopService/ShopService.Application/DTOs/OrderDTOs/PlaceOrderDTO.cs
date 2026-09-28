@@ -28,6 +28,10 @@ namespace ShopService.Application.DTOs.OrderDTOs
         [StringLength(500, ErrorMessage = "Notes cannot exceed 500 characters")]
         public string? Notes { get; set; }
 
+        [StringLength(50, MinimumLength = 3, ErrorMessage = "Coupon code must be between 3 and 50 characters")]
+        [RegularExpression(@"^[A-Za-z0-9_-]+$", ErrorMessage = "Coupon code can only contain letters, numbers, '-' and '_'")]
+        public string? CouponCode { get; set; }
+
         [Required(ErrorMessage = "At least one item is required")]
         [MinLength(1, ErrorMessage = "At least one item is required")]
         [MaxLength(50, ErrorMessage = "Maximum 50 items per order")]
