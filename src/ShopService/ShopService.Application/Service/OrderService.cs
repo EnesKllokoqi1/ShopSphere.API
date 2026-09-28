@@ -1,4 +1,5 @@
-﻿using ShopService.Application.DTOs.OrderDTOs;
+﻿using Microsoft.IdentityModel.Protocols.OpenIdConnect;
+using ShopService.Application.DTOs.OrderDTOs;
 using ShopService.Application.Interfaces;
 using ShopService.Domain.Entities;
 using ShopService.Domain.Enums;
@@ -12,10 +13,12 @@ namespace ShopService.Application.Service
 {
     public class OrderService : IOrderService
     {
+        private readonly ICouponRepository _couponRepository;
         private readonly IOrderRepository _orderRepository;
-        public OrderService(IOrderRepository orderRepository)
+        public OrderService(IOrderRepository orderRepository,ICouponRepository couponRepository)
         {
             _orderRepository = orderRepository;
+            _couponRepository = couponRepository;
         }
         public async Task<OrderResponseDTO?> CancelOrderAsync(Guid orderId, string? reason = null)
         {
@@ -140,7 +143,21 @@ namespace ShopService.Application.Service
 
         public async Task<OrderResponseDTO?> MakeOrderAsync(PlaceOrderDTO placeOrderDTO,Guid userId)
         {
-            var order = MapToOrder(placeOrderDTO,userId);
+            var order = MapToOrder(placeOrderDTO, userId);
+            var subtotal = order.OrderItems.Sum(i => i.Quantity * i.UnitPrice);
+
+            if (!string.IsNullOrWhiteSpace(placeOrderDTO.CouponCode))
+            {
+                var (success, error) = await ApplyCouponAsync(order, placeOrderDTO.CouponCode, subtotal);
+                if (!success)
+                {
+                    throw new InvalidOperationException(error);
+                }
+            }
+            else
+            {
+                order.TotalAmount = subtotal;
+            }
             int attempt = 0;
             var result = await _orderRepository.MakeOrderAsync(order,attempt);
             var createdOrder = await _orderRepository.GetOrderByIdAsync(result.Id);
@@ -272,6 +289,40 @@ namespace ShopService.Application.Service
                     Subtotal = item.Quantity * item.UnitPrice
                 }).ToList()
             };
+        }
+        private async Task<(bool Success, string? Error)> ApplyCouponAsync(Order order, string couponCode, decimal subtotal)
+        {
+            var coupon = await _couponRepository.GetCouponByCodeAsync(couponCode.Trim().ToUpperInvariant());
+
+            if (coupon is null || !coupon.IsActive)
+                return (false, "Invalid coupon.");
+
+            var now = DateTime.UtcNow;
+            if (now < coupon.StartDate || (coupon.EndDate.HasValue && now > coupon.EndDate.Value))
+                return (false, "Coupon is not valid at this time.");
+
+            if (coupon.MinOrderAmount.HasValue && subtotal < coupon.MinOrderAmount.Value)
+                return (false, "Order total is too low for this coupon.");
+
+            if (coupon.MaxUsesPerUser.HasValue && order.UserId.HasValue)
+            {
+                var used = await _couponRepository.GetUserUsageCountAsync(coupon.Id, order.UserId.Value);
+                if (used >= coupon.MaxUsesPerUser.Value)
+                    return (false, "You have already used this coupon the maximum number of times.");
+            }
+            if (coupon.MaxUses.HasValue && coupon.UsedCount >= coupon.MaxUses.Value)
+                return (false, "Coupon usage limit reached.");
+
+            var discount = coupon.DiscountType == DiscountType.Percentage
+                ? subtotal * coupon.DiscountValue / 100
+                : coupon.DiscountValue;
+
+            if (coupon.MaxDiscountAmount.HasValue)
+                discount = Math.Min(discount, coupon.MaxDiscountAmount.Value);
+
+            order.CouponId = coupon.Id;
+            order.TotalAmount = Math.Max(0, subtotal - discount);
+            return (true, null);
         }
     }
 }

@@ -57,14 +57,16 @@ namespace ShopService.Infrastructure.Repositories
             return coupon;
         }
 
-        public async Task DecrementUsedCountAsync(Guid couponId)
+        public async Task<bool> DecrementUsedCountAsync(Guid couponId)
         {
-            var coupon = await _appDbContext.Coupons.FirstOrDefaultAsync(c => c.Id == couponId);
-            if (coupon is not null && coupon.UsedCount > 0)
+            var coupon = await GetCouponByIdAsync(couponId);
+            if (coupon is null || coupon.UsedCount <= 0)
             {
-                coupon.UsedCount--;
-                await _appDbContext.SaveChangesAsync();
+                return false;
             }
+            coupon.UsedCount--;
+            await _appDbContext.SaveChangesAsync();
+            return true;
         }
 
         public async Task<bool> DeleteCouponAsync(Guid couponId)
@@ -105,7 +107,7 @@ namespace ShopService.Infrastructure.Repositories
             return result;
         }
 
-        public async Task<IEnumerable<CouponResposneDTO>?> GetCouponsLinkedToProduct(Guid productId, int pageNumber, int pageSize)
+        public async Task<IEnumerable<CouponResposneDTO>> GetCouponsLinkedToProduct(Guid productId, int pageNumber = 1, int pageSize = 10)
         {
          return await _appDbContext
         .Coupons
@@ -118,7 +120,7 @@ namespace ShopService.Infrastructure.Repositories
         .ToListAsync();
         }
 
-        public async Task<IEnumerable<ProductSummaryDTO>?> GetProductsLinkedToCoupon(Guid couponId, int pageNumber, int pageSize)
+        public async Task<IEnumerable<ProductSummaryDTO>?> GetProductsLinkedToCoupon(Guid couponId, int pageNumber = 1, int pageSize = 10)
         {
          return await _appDbContext
         .Products
@@ -140,9 +142,7 @@ namespace ShopService.Infrastructure.Repositories
 
         public async Task<bool> RemoveProductFromCouponAsync(Guid couponId, Guid productId)
         {
-            var coupon = await _appDbContext.Coupons
-           .Include(c => c.products)
-           .FirstOrDefaultAsync(c => c.Id == couponId);
+            var coupon = await GetCouponByIdAsync(couponId);
             if (coupon is null)
             {
                 return false;
@@ -182,7 +182,14 @@ namespace ShopService.Infrastructure.Repositories
             {
                 return null;
             }
+            var newCode = updateCouponDTO.Code?.Trim();
 
+            if (newCode is not null
+                && newCode != existing.Code
+                && await _couponRepository.CodeExistsAsync(newCode))
+            {
+                return null;
+            }
             existing.Code = updatedCoupon.Code;
             existing.Name = updatedCoupon.Name;
             existing.Description = updatedCoupon.Description;
