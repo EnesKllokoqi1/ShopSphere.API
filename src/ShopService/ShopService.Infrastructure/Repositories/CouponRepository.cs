@@ -86,6 +86,7 @@ namespace ShopService.Infrastructure.Repositories
             return await _appDbContext
                 .Coupons
                 .AsNoTracking()
+                .Where(c=>c.IsActive==true)
                 .OrderByDescending(e => e.CreatedAt)
                 .Skip((pageNumber - 1) * pageSize)
                 .Take(pageSize)
@@ -112,7 +113,7 @@ namespace ShopService.Infrastructure.Repositories
          return await _appDbContext
         .Coupons
         .AsNoTracking()
-        .Where(c => c.products.Any(p => p.Id == productId))
+        .Where(c => c.products.Any(p => p.Id == productId) && c.IsActive==true)
         .OrderByDescending(c => c.CreatedAt)
         .Skip((pageNumber - 1) * pageSize)
         .Take(pageSize)
@@ -125,7 +126,7 @@ namespace ShopService.Infrastructure.Repositories
          return await _appDbContext
         .Products
         .AsNoTracking()
-        .Where(e => e.Coupons.Any(c => c.Id == couponId))
+        .Where(e => e.Coupons.Any(c => c.Id == couponId && c.IsActive==true))
         .OrderByDescending(c => c.CreatedAt)
         .Skip((pageNumber - 1) * pageSize)
         .Take(pageSize)
