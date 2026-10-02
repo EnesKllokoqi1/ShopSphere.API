@@ -183,6 +183,7 @@ namespace ShopService.Infrastructure.Repositories
             {
                 return null;
             }
+
             existing.Code = updatedCoupon.Code;
             existing.Name = updatedCoupon.Name;
             existing.Description = updatedCoupon.Description;
