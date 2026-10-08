@@ -16,8 +16,8 @@ namespace ShopService.Application.Interfaces
         Task<bool> CodeExistsAsync(string code);
         Task<Coupon?> UpdateCouponAsync(Coupon updatedCoupon, Guid couponId);
         Task<bool> DeleteCouponAsync(Guid couponId);
-        Task<IEnumerable<CouponResposneDTO>?> GetAllCouponsAsync(int pageNumber,int pageSize);
-        Task<IEnumerable<CouponResposneDTO>?> GetCouponsLinkedToProduct(Guid productId,int pageNumber, int pageSize);
+        Task<IEnumerable<CouponResponseDTO>?> GetAllCouponsAsync(int pageNumber,int pageSize);
+        Task<IEnumerable<CouponResponseDTO>?> GetCouponsLinkedToProduct(Guid productId,int pageNumber, int pageSize);
         Task<IEnumerable<ProductSummaryDTO?>> GetProductsLinkedToCoupon(Guid couponId, int pageNumber, int pageSize);
         Task<bool> AddProductToCouponAsync(Guid couponId, Guid productId);
         Task<bool> RemoveProductFromCouponAsync(Guid couponId, Guid productId);

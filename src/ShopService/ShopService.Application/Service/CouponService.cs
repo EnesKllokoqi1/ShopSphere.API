@@ -1,4 +1,4 @@
-﻿using ShopService.Application.DTOs.CouponDTOs;
+using ShopService.Application.DTOs.CouponDTOs;
 using ShopService.Application.Interfaces;
 using ShopService.Domain.Entities;
 using System;
@@ -26,7 +26,7 @@ namespace ShopService.Application.Service
             return await _couponRepository.CodeExistsAsync(code);
         }
 
-        public async Task<CouponResposneDTO?> CreateCouponAsync(CreateCouponDTO createCouponDTO)
+        public async Task<CouponResponseDTO?> CreateCouponAsync(CreateCouponDTO createCouponDTO)
         {
             var result = MapCouponCreateDto(createCouponDTO);
             var coupon = await _couponRepository.CreateCouponAsync(result);
@@ -52,14 +52,14 @@ namespace ShopService.Application.Service
             return await _couponRepository.DeleteCouponAsync(couponId);
         }
 
-        public async Task<IEnumerable<CouponResposneDTO>?> GetAllCouponsAsync(int pageNumber, int pageSize)
+        public async Task<IEnumerable<CouponResponseDTO>?> GetAllCouponsAsync(int pageNumber, int pageSize)
         {
             pageNumber = Math.Max(1, pageNumber);
             pageSize = Math.Clamp(pageSize, 1, 100);
             return await _couponRepository.GetAllCouponsAsync(pageNumber, pageSize);
         }
 
-        public async Task<CouponResposneDTO?> GetCouponByCodeAsync(string code)
+        public async Task<CouponResponseDTO?> GetCouponByCodeAsync(string code)
         {
             var result = await _couponRepository.GetCouponByCodeAsync(code);
             if (result is null)
@@ -69,7 +69,7 @@ namespace ShopService.Application.Service
             return MapCouponToResponseDto(result);
         }
 
-        public async Task<CouponResposneDTO?> GetCouponByIdAsync(Guid couponId)
+        public async Task<CouponResponseDTO?> GetCouponByIdAsync(Guid couponId)
         {
             var coupon = await _couponRepository.GetCouponByIdAsync(couponId);
             if (coupon is null)
@@ -79,14 +79,14 @@ namespace ShopService.Application.Service
             return MapCouponToResponseDto(coupon);
         }
 
-        public async Task<IEnumerable<CouponResposneDTO>> GetCouponsLinkedToProduct(Guid productId, int pageNumber, int pageSize)
+        public async Task<IEnumerable<CouponResponseDTO>> GetCouponsLinkedToProduct(Guid productId, int pageNumber, int pageSize)
         {
             pageNumber = Math.Max(1, pageNumber);
             pageSize = Math.Clamp(pageSize, 1, 100);
             return await _couponRepository.GetCouponsLinkedToProduct(productId, pageNumber, pageSize);
         }
 
-        public async Task<IEnumerable<ProductSummaryDTO?>> GetProductsLinkedToCoupon(Guid couponId, int pageNumber, int pageSize)
+        public async Task<IEnumerable<ProductSummaryDTO>> GetProductsLinkedToCoupon(Guid couponId, int pageNumber, int pageSize)
         {
             pageNumber = Math.Max(1, pageNumber);
             pageSize = Math.Clamp(pageSize, 1, 100);
@@ -108,16 +108,16 @@ namespace ShopService.Application.Service
             return await _couponRepository.TryIncrementUsedCountAsync(couponId);
         }
 
-        public async Task<CouponResposneDTO?> UpdateCouponAsync(UpdateCouponDTO updateCouponDTO, Guid couponId)
+        public async Task<CouponResponseDTO?> UpdateCouponAsync(UpdateCouponDTO updateCouponDTO, Guid couponId)
         {
             var existing = await _couponRepository.GetCouponByIdAsync(couponId);
             if (existing is null)
                 return null;
-            var newCode = updateCouponDTO.Code?.Trim();
+            var newCode = updateCouponDTO.Code?.Trim().ToUpperInvariant();
 
-            if (newCode is not null
-                && newCode != existing.Code
-                && await _couponRepository.CodeExistsAsync(newCode))
+            if (!string.IsNullOrWhiteSpace(newCode)
+            && newCode != existing.Code
+            && await _couponRepository.CodeExistsAsync(newCode))
             {
                 return null;
             }
@@ -161,9 +161,9 @@ namespace ShopService.Application.Service
                 CreatedAt = DateTime.UtcNow
             };
         }
-        private CouponResposneDTO MapCouponToResponseDto(Coupon coupon)
+        private CouponResponseDTO MapCouponToResponseDto(Coupon coupon)
         {
-            return new CouponResposneDTO
+            return new CouponResponseDTO
             {
                 Id = coupon.Id,
                 Code = coupon.Code,

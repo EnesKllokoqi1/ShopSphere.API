@@ -22,19 +22,10 @@ namespace ShopService.Infrastructure.Repositories
         public async Task<bool> AddProductToCouponAsync(Guid couponId, Guid productId)
         {
             var result = await GetCouponByIdAsync(couponId);
-            if (result is null)
-            {
-                return false;
-            }
-            if (result.products.Any(p => p.Id == productId))
-            {
-                return false; 
-            }
+            if (result is null) return false;
+            if (result.products.Any(p => p.Id == productId)) return false;
             var product = await _appDbContext.Products.FirstOrDefaultAsync(e => e.Id == productId);
-            if (product is null)
-            {
-                return false;
-            }
+            if (product is null) return false;
             result.products.Add(product);
             await _appDbContext.SaveChangesAsync();
             return true;
@@ -42,11 +33,13 @@ namespace ShopService.Infrastructure.Repositories
 
         public async Task<bool> CodeExistsAsync(string code)
         {
-            return await _appDbContext.Coupons.AnyAsync(e => e.Code == code);
+            var normalized = code.Trim().ToUpperInvariant();
+            return await _appDbContext.Coupons.AnyAsync(e => e.Code == normalized);
         }
 
         public async Task<Coupon?> CreateCouponAsync(Coupon coupon)
         {
+            coupon.Code = coupon.Code.Trim().ToUpperInvariant();
             var check = await CodeExistsAsync(coupon.Code);
             if (check)
             {
@@ -81,7 +74,7 @@ namespace ShopService.Infrastructure.Repositories
             return true;
         }
 
-        public async Task<IEnumerable<CouponResposneDTO>?> GetAllCouponsAsync(int pageNumber = 1, int pageSize = 10)
+        public async Task<IEnumerable<CouponResponseDTO>?> GetAllCouponsAsync(int pageNumber = 1, int pageSize = 10)
         {
             return await _appDbContext
                 .Coupons
@@ -95,7 +88,8 @@ namespace ShopService.Infrastructure.Repositories
         }
         public async Task<Coupon?> GetCouponByCodeAsync(string code)
         {
-            var result = await _appDbContext.Coupons.FirstOrDefaultAsync(e => e.Code == code);
+            var normalized = code.Trim().ToUpperInvariant();
+            var result = await _appDbContext.Coupons.FirstOrDefaultAsync(e => e.Code == normalized);
             return result;
         }
 
@@ -108,7 +102,7 @@ namespace ShopService.Infrastructure.Repositories
             return result;
         }
 
-        public async Task<IEnumerable<CouponResposneDTO>> GetCouponsLinkedToProduct(Guid productId, int pageNumber = 1, int pageSize = 10)
+        public async Task<IEnumerable<CouponResponseDTO>> GetCouponsLinkedToProduct(Guid productId, int pageNumber = 1, int pageSize = 10)
         {
          return await _appDbContext
         .Coupons
@@ -120,8 +114,8 @@ namespace ShopService.Infrastructure.Repositories
         .Select(MapToCouponResponseDTO())
         .ToListAsync();
         }
-
-        public async Task<IEnumerable<ProductSummaryDTO>?> GetProductsLinkedToCoupon(Guid couponId, int pageNumber = 1, int pageSize = 10)
+        
+        public async Task<IEnumerable<ProductSummaryDTO>> GetProductsLinkedToCoupon(Guid couponId, int pageNumber = 1, int pageSize = 10)
         {
          return await _appDbContext
         .Products
@@ -184,7 +178,7 @@ namespace ShopService.Infrastructure.Repositories
                 return null;
             }
 
-            existing.Code = updatedCoupon.Code;
+            existing.Code = updatedCoupon.Code.Trim().ToUpperInvariant();
             existing.Name = updatedCoupon.Name;
             existing.Description = updatedCoupon.Description;
             existing.DiscountType = updatedCoupon.DiscountType;
@@ -201,9 +195,9 @@ namespace ShopService.Infrastructure.Repositories
             await _appDbContext.SaveChangesAsync();
             return existing;        
         }
-        private static Expression<Func<Coupon, CouponResposneDTO>> MapToCouponResponseDTO()
+        private static Expression<Func<Coupon, CouponResponseDTO>> MapToCouponResponseDTO()
         {
-            return coupon => new CouponResposneDTO
+            return coupon => new CouponResponseDTO
             {
                 Id = coupon.Id,
                 Code = coupon.Code,

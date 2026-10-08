@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace ShopService.Application.DTOs.CouponDTOs
 {
-    public class CouponResposneDTO
+    public class CouponResponseDTO
     {
         public Guid Id { get; set; }
         public string Code { get; set; } = string.Empty;
