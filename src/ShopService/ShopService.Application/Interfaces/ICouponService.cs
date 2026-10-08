@@ -1,4 +1,4 @@
-﻿using ShopService.Application.DTOs.CouponDTOs;
+using ShopService.Application.DTOs.CouponDTOs;
 using ShopService.Domain.Entities;
 using System;
 using System.Collections.Generic;
