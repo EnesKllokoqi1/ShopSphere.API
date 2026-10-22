@@ -1,4 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using ShopService.Application.DTOs.CartDTOs;
 using ShopService.Application.DTOs.CategoryDTOs;
 using ShopService.Application.Interfaces;
