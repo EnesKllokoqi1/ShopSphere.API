@@ -14,6 +14,8 @@ namespace ShopService.Application.DTOs.CartDTOs
         public string ProductName { get; set; } = string.Empty;
         public int Quantity { get; set; }
         public decimal UnitPrice { get; set; }
+        public DateTime CreatedAt { get; set; }
+        public DateTime UpdatedAt { get; set; }
         public decimal Subtotal => UnitPrice * Quantity;
     }
 }
