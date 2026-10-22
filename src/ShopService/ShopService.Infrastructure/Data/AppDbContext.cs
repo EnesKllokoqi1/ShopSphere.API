@@ -184,6 +184,14 @@ namespace ShopService.Infrastructure.Data
                     .IsRequired()
                     .HasPrecision(18, 2);
 
+                entity.Property(e => e.CreatedAt)
+                   .HasDefaultValueSql("CURRENT_TIMESTAMP")
+                   .ValueGeneratedOnAdd();
+
+                entity.Property(e => e.UpdatedAt)
+                     .IsRequired()
+                     .HasDefaultValueSql("CURRENT_TIMESTAMP");
+
                 entity.HasOne(e => e.Cart)
                     .WithMany(e => e.Items)
                     .HasForeignKey(e => e.CartId)
@@ -295,8 +303,9 @@ namespace ShopService.Infrastructure.Data
                     .ValueGeneratedOnAdd();
 
                 entity.Property(e => e.UpdatedAt)
-                    .HasDefaultValueSql("CURRENT_TIMESTAMP")
-                    .ValueGeneratedOnAddOrUpdate();
+                    .IsRequired()
+                    .HasDefaultValueSql("CURRENT_TIMESTAMP");
+                    
 
                 entity.HasOne(e => e.Category)
                     .WithMany(e => e.Products)
