@@ -126,7 +126,7 @@ namespace ShopService.Infrastructure.Repositories
             return i => new CartItemResponseDTO
             {
                 Id = i.Id,
-                ProductId = i.ProductId ?? Guid.Empty,
+                ProductId = i.ProductId,
                 ProductName = i.Product != null ? i.Product.Name : string.Empty,
                 Quantity = i.Quantity,
                 UnitPrice = i.UnitPrice,
