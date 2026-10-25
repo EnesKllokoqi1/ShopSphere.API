@@ -173,6 +173,8 @@ namespace ShopService.Infrastructure.Data
             // ========================================
             modelBuilder.Entity<CartItem>(entity =>
             {
+                entity.HasIndex(e => new { e.CartId, e.ProductId })
+    .IsUnique();
                 entity.HasKey(e => e.Id);
                 entity.Property(e => e.Id).ValueGeneratedOnAdd();
 
