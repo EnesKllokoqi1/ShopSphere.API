@@ -17,7 +17,7 @@ namespace ShopService.Application.Interfaces
         Task<CartItem?> UpdateCartItem(CartItem updatedCartItem, Guid cartItemId, Guid userId);
         Task<bool> DeleteCart(Guid cartId,Guid userId);
         Task<IEnumerable<CartItemResponseDTO>> GetAllCartItems(Guid userId,int pageNumber,int pageSize);
-        Task<CartItem?> GetCartItemById(Guid cartItemId);
+        Task<CartItem?> GetCartItemById(Guid cartItemId,Guid userID);
         Task<Cart?> GetUsersCart(Guid userId);
 
     }

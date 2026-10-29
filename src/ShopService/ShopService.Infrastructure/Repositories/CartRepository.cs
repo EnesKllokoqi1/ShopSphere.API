@@ -22,6 +22,10 @@ namespace ShopService.Infrastructure.Repositories
         }
         public async Task<CartItem?> AddCartItemToCart(CartItem cartItem, Guid userId)
         {
+            var cart = await _appDbContext.Carts
+      .FirstOrDefaultAsync(c => c.UserId == userId);
+            if (cart is null) return null;
+            cartItem.CartId = cart.Id;
             var cartExists = await _appDbContext.Carts
         .AnyAsync(c => c.Id == cartItem.CartId && c.UserId == userId);
             if (!cartExists) return null;
@@ -56,7 +60,35 @@ namespace ShopService.Infrastructure.Repositories
             if (await _appDbContext.Carts.AnyAsync(e => e.UserId == userId))
                 return null;
 
+            var merged = cart.Items
+                .GroupBy(i => i.ProductId)
+                .Select(g => new CartItem
+                {
+                    ProductId = g.Key,
+                    Quantity = g.Sum(i => i.Quantity)
+                })
+                .ToList();
+
+            var productIds = merged.Select(i => i.ProductId).ToList();
+            var products = await _appDbContext.Products
+                .Where(p => productIds.Contains(p.Id))
+                .ToDictionaryAsync(p => p.Id);
+
+            foreach (var item in merged)
+            {
+                if (!products.TryGetValue(item.ProductId, out var product))
+                    return null;
+
+                if (product.StockQuantity < item.Quantity)
+                    return null;
+
+                item.Product = product;
+                item.UnitPrice = product.Price;
+            }
+
             cart.UserId = userId;
+            cart.Items = merged;
+
             _appDbContext.Carts.Add(cart);
             await _appDbContext.SaveChangesAsync();
             return cart;
@@ -85,10 +117,10 @@ namespace ShopService.Infrastructure.Repositories
 
         }
 
-        public async Task<CartItem?> GetCartItemById(Guid cartItemId)
+        public async Task<CartItem?> GetCartItemById(Guid cartItemId,Guid userId)
         {
             var cartItem = await 
-                _appDbContext.CartItems.Include(e=>e.Cart).Include(e=>e.Product).FirstOrDefaultAsync(e => e.Id == cartItemId);
+                _appDbContext.CartItems.Include(e=>e.Cart).Include(e=>e.Product).FirstOrDefaultAsync(e => e.Id == cartItemId &&e.Cart.UserId==userId);
             return cartItem;
         }
 

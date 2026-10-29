@@ -1,4 +1,4 @@
-﻿using ShopService.Application.DTOs.CartDTOs;
+using ShopService.Application.DTOs.CartDTOs;
 using ShopService.Domain.Entities;
 using System;
 using System.Collections.Generic;
@@ -10,13 +10,13 @@ namespace ShopService.Application.Interfaces
 {
     public interface ICartService
     {       
-        Task<CartResponseDTO?> CreateCart(CreateCartDTO createCartDTO, Guid userId);
+        Task<CartResponseDTO?> CreateCartAsync(CreateCartDTO createCartDTO, Guid userId);
         Task<bool> RemoveCartItemFromCart(Guid CartItemId, Guid userId);
         Task<CartItemResponseDTO?> AddCartItemToCart(AddCartItemDTO cartItem, Guid userId);
         Task<bool> DeleteCart(Guid cartId, Guid userId);
-        Task<CartItemResponseDTO?> UpdateCartItem(CartItem updatedCartItem, Guid cartItemId, Guid userId);
+        Task<CartItemResponseDTO?> UpdateCartItem(UpdateCartItemDTO updatedCartItemDTO, Guid cartItemId, Guid userId);
         Task<IEnumerable<CartItemResponseDTO>> GetAllCartItems(Guid userId, int pageNumber, int pageSize);
-        Task<CartItemResponseDTO?> GetCartItemById(Guid cartItemId);
+        Task<CartItemResponseDTO?> GetCartItemByIdAsync(Guid cartItemId,Guid userId);
         Task<CartResponseDTO?> GetUsersCart(Guid userId);
     }
 }
